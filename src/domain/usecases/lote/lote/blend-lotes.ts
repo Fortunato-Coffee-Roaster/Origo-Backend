@@ -6,6 +6,7 @@ import { LoteRepository } from "../../../repository/lote.repository";
 import { PedidoRepository } from "../../../repository/pedido.repository";
 import { UserRepository } from "../../../repository/user.repository";
 import { LoteEntity } from '../../../entities/lote.entity';
+import { TipoUser } from "../../../../enums/tipo-user.enum";
 
 export interface BlendLotesUseCase {
     execute(dto: BlendLotesDto): Promise<LoteEntity>;
@@ -164,7 +165,7 @@ export class BlendLotes implements BlendLotesUseCase {
 
         // 5) Prefijo de cliente (si aplica)
         const user = await this.userRepository.getUserById(id_user);
-        if (user?.rol === 'cliente') {
+        if (user?.tipo === TipoUser.CLIENTE) {
             const [n, a] = user.nombre.trim().split(' ');
             const uInit = `${n?.[0]?.toUpperCase() || ''}${a?.[0]?.toUpperCase() || ''}`;
             idGenerado = `${uInit}-${idGenerado}`;

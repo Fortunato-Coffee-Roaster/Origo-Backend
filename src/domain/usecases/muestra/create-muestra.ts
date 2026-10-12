@@ -1,3 +1,4 @@
+import { TipoUser } from "../../../enums/tipo-user.enum";
 import { CreateMuestraDto } from "../../dtos/muestra/create";
 import { MuestraEntity } from "../../entities/muestra.entity";
 import { MuestraRepository } from "../../repository/muestra.repository";
@@ -27,7 +28,8 @@ export class CreateMuestra implements CreateMuestraUseCase {
         const user = dto.id_user
             ? await this.userRepository.getUserById(dto.id_user)
             : null;
-        const esCliente = user?.rol === 'cliente';
+        const esCliente = user?.tipo === TipoUser.CLIENTE;
+
 
         // 2. Lógica de siglas base 
         const { productor, variedades, proceso } = dto;
@@ -56,7 +58,7 @@ export class CreateMuestra implements CreateMuestraUseCase {
         } else if (proceso.toLowerCase() === 'honey') {
             inicialProceso = 'HO';
         } else if (proceso.toLowerCase() === 'lavado') {
-            inicialProceso = ''; 
+            inicialProceso = '';
         }
 
         let idGenerado = `${inicialNombre}${inicialApellido}${inicialVariedad}${inicialProceso}`;
@@ -66,7 +68,7 @@ export class CreateMuestra implements CreateMuestraUseCase {
         const numeroMuestraFinal = dto.owned_by_store
             ? (await this.muestraRepository.getMuestrasOwnedByStore(true)).length + 1
             : (await this.muestraRepository.getMuestrasByUserId(dto.id_user!, true)).length + 1;
-        
+
         idGenerado = `${idGenerado}-${numeroMuestraFinal}`;
 
         // 4. LOTE PARA CLIENTE

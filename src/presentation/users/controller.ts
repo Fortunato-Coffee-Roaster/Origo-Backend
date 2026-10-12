@@ -11,8 +11,6 @@ import { DeleteUser } from '../../domain/usecases/user/delete-user';
 import { GetUsersRol } from '../../domain/usecases/user/get-user-rol';
 import { UpdateUserDto } from '../../domain/dtos/user/update';
 
-import { envs } from '../../config/envs';
-import jwt from "jsonwebtoken";
 import { RefreshAccessToken } from '../../domain/usecases/user/refresh-token';
 import { AuthUserByPin } from '../../domain/usecases/user/auth-user-pin';
 import { ChangePassword } from '../../domain/usecases/user/change-password';
@@ -20,6 +18,7 @@ import { PasswordResetTokenRepository } from '../../domain/repository/passwordRe
 import { EmailService } from '../../config/email';
 import { ForgotPassword } from '../../domain/usecases/passwordResetToken/forgotPassword';
 import { ResetPassword } from '../../domain/usecases/passwordResetToken/resetPassword';
+import { TipoUser } from '@prisma/client';
 
 
 
@@ -34,6 +33,13 @@ export class UserController {
     private readonly emailService: EmailService
   ) { }
 
+  private handleError = (res: Response, error: any) => {
+    // ⚠️ nunca res.json({ error }) con un Error: se serializa como {}
+    return res.status(400).json({ error: error?.message ?? String(error) });
+  };
+
+  // El body lleva `tipo` (CLIENTE, STAFF o ADMIN) y los campos de ese tipo.
+  // CreateUserDto.create devuelve el DTO que corresponde.
   public createUser = async (req: Request, res: Response) => {
     const [error, createUserDto] = CreateUserDto.create(req.body);
     if (error) {
@@ -42,27 +48,29 @@ export class UserController {
     new CreateUser(this.userRepository)
       .execute(createUserDto!)
       .then(user => res.json(user))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
   public getUserById = async (req: Request, res: Response) => {
     new GetUserById(this.userRepository)
       .execute(req.params.id)
       .then(user => res.json(user))
-      .catch(error => res.status(400).json('error aqui'));
+      .catch(error => this.handleError(res, error));
 
   }
 
+  // El body no lleva `tipo`: UpdateUser lo toma del usuario guardado y
+  // rechaza campos que pertenezcan a la tabla de otro tipo.
   public updateUser = async (req: Request, res: Response) => {
     const user_id = req.params.id;
-    const [error, createUserDto] = UpdateUserDto.update({ ...req.body, user_id });
+    const [error, updateUserDto] = UpdateUserDto.update({ ...req.body, id_user: user_id });
     if (error) {
       return res.status(400).json({ error });
     }
     new UpdateUser(this.userRepository)
-      .execute(user_id, createUserDto!)
+      .execute(user_id, updateUserDto!)
       .then(user => res.json(user))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
 
   }
 
@@ -71,15 +79,16 @@ export class UserController {
     new DeleteUser(this.userRepository)
       .execute(user_id)
       .then(user => res.json(user))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
+  // :role ahora es el tipo de usuario: cliente, staff o admin.
   public getUsersByRole = async (req: Request, res: Response) => {
     const role = req.params.role;
     new GetUsersRol(this.userRepository)
       .execute(role)
       .then(users => res.json(users))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
   public AssignRoleToUser = async (req: Request, res: Response) => {
@@ -88,19 +97,19 @@ export class UserController {
     new AssignRoleToUser(this.userRepository)
       .execute(user_id, role_id)
       .then(user => res.json(user))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
   public getAllUsers = async (req: Request, res: Response) => {
     this.userRepository.getAllUsers()
       .then(users => res.json(users))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
   public getUsersInternal = async (req: Request, res: Response) => {
     this.userRepository.getUsersInternal()
       .then(users => res.json(users))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => this.handleError(res, error));
   }
 
 
@@ -117,7 +126,7 @@ export class UserController {
         user: {
           id_user: user.id_user,
           email: user.email,
-          rol: user.rol,
+          tipo: user.tipo,
           id_rol: user.id_rol
         }
       });
@@ -151,23 +160,18 @@ export class UserController {
 
 
   public getSessionInfo = async (req: Request, res: Response) => {
-    const user = req.user as {
-      id_user: string;
-      email: string;
-      id_rol: string;
-      rol?: string;
-    };
+    const user = req.user;
 
     if (!user) {
       return res.status(401).json({ message: 'No autenticado' });
     }
 
-    return res.json({
-      id_user: user.id_user,
-      email: user.email,
-      id_rol: user.id_rol,
-      rol: user.rol ?? ''
-    });
+    interface JwtPayload {
+      id_user: string;
+      email: string;
+      id_rol: string | null;
+      tipo: TipoUser;
+    }
   };
 
   public logout = async (req: Request, res: Response) => {
@@ -209,7 +213,7 @@ export class UserController {
         user: {
           id_user: user.id_user,
           email: user.email,
-          rol: user.rol,
+          tipo: user.tipo,
           id_rol: user.id_rol
         }
       });

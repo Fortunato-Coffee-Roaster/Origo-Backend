@@ -9,6 +9,29 @@ import { CreatePedido } from '../../domain/usecases/pedido/create-pedido';
 
 
 
+// El cliente de un pedido es un UserCliente, y su nombre vive en User (un nivel
+// más adentro). Se pide así y se aplana a { id_user, nombre }, que es la forma
+// que ya esperan PedidoEntity y PedidoConLoteEntity.
+const CLIENTE_SELECT = {
+    select: {
+        id_user: true,
+        user: {
+            select: {
+                nombre: true,
+            },
+        },
+    },
+} as const;
+
+type PedidoConCliente = { cliente: { id_user: string; user: { nombre: string } } | null };
+
+const aplanarCliente = <T extends PedidoConCliente>(pedido: T) => ({
+    ...pedido,
+    cliente: pedido.cliente
+        ? { id_user: pedido.cliente.id_user, nombre: pedido.cliente.user.nombre }
+        : null,
+});
+
 export class PedidoDataSourceImpl implements PedidoDatasource {
 
 
@@ -100,18 +123,14 @@ export class PedidoDataSourceImpl implements PedidoDatasource {
                 eliminado: false,
             },
             include: {
-                cliente: {
-                    select: {
-                        nombre: true,
-                    },
-                },
+                cliente: CLIENTE_SELECT,
             },
         });
 
         return pedidos.map((pedido) =>
             PedidoEntity.fromObject({
-                ...pedido,
-                usuario_nombre: pedido.cliente?.nombre ?? null,
+                ...aplanarCliente(pedido),
+                usuario_nombre: pedido.cliente?.user.nombre ?? null,
             })
         );
     }
@@ -226,19 +245,14 @@ export class PedidoDataSourceImpl implements PedidoDatasource {
             },
             include: {
                 lote: true,
-                cliente: {
-                    select: {
-                        id_user: true,
-                        nombre: true,
-                    },
-                },
+                cliente: CLIENTE_SELECT,
             },
             orderBy: {
                 fecha_registro: 'desc',
             },
         });
 
-        return pedidos.map(pedido => PedidoConLoteEntity.fromObject(pedido));
+        return pedidos.map(pedido => PedidoConLoteEntity.fromObject(aplanarCliente(pedido)));
     }
 
     async getPedidoConLote(id: string): Promise<PedidoConLoteEntity> {
@@ -249,12 +263,7 @@ export class PedidoDataSourceImpl implements PedidoDatasource {
             },
             include: {
                 lote: true,
-                cliente: {
-                    select: {
-                        id_user: true,
-                        nombre: true,
-                    },
-                },
+                cliente: CLIENTE_SELECT,
             },
         });
 
@@ -262,7 +271,7 @@ export class PedidoDataSourceImpl implements PedidoDatasource {
             throw new Error("No existe el pedido");
         }
 
-        return PedidoConLoteEntity.fromObject(pedido);
+        return PedidoConLoteEntity.fromObject(aplanarCliente(pedido));
     }
 
     async getPedidosConLoteByEstadoYTipo(
@@ -277,19 +286,14 @@ export class PedidoDataSourceImpl implements PedidoDatasource {
             },
             include: {
                 lote: true,
-                cliente: {
-                    select: {
-                        id_user: true,
-                        nombre: true,
-                    },
-                },
+                cliente: CLIENTE_SELECT,
             },
             orderBy: {
                 fecha_registro: 'desc',
             },
         });
 
-        return pedidos.map(pedido => PedidoConLoteEntity.fromObject(pedido));
+        return pedidos.map(pedido => PedidoConLoteEntity.fromObject(aplanarCliente(pedido)));
     }
 
     async getPedidosByRango(desde: Date, hasta: Date): Promise<PedidoEntity[]> {

@@ -14,16 +14,11 @@ export class GetLoteRoaster implements GetLoteRoasterUseCase {
         private readonly userRepository: UserRepository
     ){}
 
+    // Lotes de la tienda. Antes se buscaba al dueño y se miraba si era admin;
+    // un lote ya no puede pertenecer a un usuario interno, así que la tienda
+    // se identifica por owned_by_store.
     async execute(  ): Promise<LoteEntity[]> {
-        return await this.loteRepository.getLotes().then(async (lotes) => {
-            const lotesWithUser = await Promise.all(lotes.map(async (lote) => {
-                const user = await this.userRepository.getUserById(lote.id_user ? lote.id_user : '');
-                if (user?.rol == 'admin'){
-                    return lote;
-                }
-                return undefined;
-            }));
-            return lotesWithUser.filter((lote): lote is LoteEntity => lote !== undefined);
-        })
+        const lotes = await this.loteRepository.getLotes();
+        return lotes.filter(lote => lote.owned_by_store);
     }
 }

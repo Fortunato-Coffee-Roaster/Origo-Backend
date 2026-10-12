@@ -1,7 +1,7 @@
-import { UserEntity } from "../../entities/user.entity";
 import { UserRepository } from "../../repository/user.repository";
 import { CreateUserDto } from '../../dtos/user/create';
 import { Encryption } from "../../../config/bcrypt";
+import { UserEntity } from "../../entities/user/user.entity";
 
 export interface CreateUserUseCase {
     execute(createUserDto: CreateUserDto): Promise<UserEntity>;

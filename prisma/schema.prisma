@@ -7,53 +7,78 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
+enum TipoUser {
+  CLIENTE
+  STAFF
+  ADMIN
+}
+
 model User {
   id_user               String               @id @default(uuid())
+  tipo                  TipoUser
   nombre                String
   email                 String               @unique
-  rol                   String
   password              String
   numero_telefono       String
+  documento_tipo        String?
+  documento_identidad   String?              @unique
+  fecha_nacimiento      DateTime?
   eliminado             Boolean              @default(false)
   fecha_registro        DateTime             @default(now())
   fecha_editado         DateTime?
-  nombre_comercial      String?
-  departamento          String?
-  direccion             String?
-  documento_identidad   String?              @unique
-  documento_tipo        String?
-  fecha_nacimiento      DateTime?
-  cant_suscripcion      Int?                 @default(0)
-  suscripcion           Boolean              @default(false)
-  tuestes               Int?                 @default(0)
-  id_rol                String?
-  fecha_primera_compra  DateTime?
-  balonesGasFinalizados BalonGas[]           @relation("BalonGasUserFinUso")
-  balonesGasIngresados  BalonGas[]           @relation("BalonGasUserIngreso")
-  balonesGasIniciados   BalonGas[]           @relation("BalonGasUserInicioUso")
-  boxRespuestas         BoxRespuesta[]
-  cambios               Cambios[]
-  historial             Historial[]
-  ingresosCafe          IngresoCafe[]
-  ingresosInsumos       IngresoInsumo[]
-  ingresosProductos     IngresoProducto[]
-  lotes                 Lote[]
-  lotesTostados         LoteTostado[]
-  movimientoAlmacens    MovimientoAlmacen[]
-  muestras              Muestra[]
+  cliente               UserCliente?
+  staff                 UserStaff?
+  admin                 UserAdmin?
   passwordResetTokens   PasswordResetToken[]
-  pedidosCompletados    Pedido[]             @relation("PedidoCompletadoPor")
+  historial             Historial[]
+  cambios               Cambios[]
   pedidosCreados        Pedido[]             @relation("PedidoCreadoPor")
-  pedidos               Pedido[]             @relation("Cliente")
-  Rol                   Rol?                 @relation(fields: [id_rol], references: [id_rol])
-  bolsas                Bolsa[]
+  pedidosCompletados    Pedido[]             @relation("PedidoCompletadoPor")
   paquetesCreados       Paquete[]            @relation("PaqueteCreadoPor")
   paquetesPreparados    Paquete[]            @relation("PaquetePreparadoPor")
-  paquetesCliente       Paquete[]            @relation("PaqueteCliente")
   enviosRegistrados     Envio[]              @relation("EnvioRegistradoPor")
   enviosDespachados     Envio[]              @relation("EnvioDespachadoPor")
   enviosEntregados      Envio[]              @relation("EnvioEntregadoPor")
   enviosCancelados      Envio[]              @relation("EnvioCanceladoPor")
+  balonesGasIngresados  BalonGas[]           @relation("BalonGasUserIngreso")
+  balonesGasIniciados   BalonGas[]           @relation("BalonGasUserInicioUso")
+  balonesGasFinalizados BalonGas[]           @relation("BalonGasUserFinUso")
+  ingresosCafe          IngresoCafe[]
+  ingresosInsumos       IngresoInsumo[]
+  ingresosProductos     IngresoProducto[]
+  movimientoAlmacens    MovimientoAlmacen[]
+}
+
+model UserCliente {
+  id_user              String         @id
+  user                 User           @relation(fields: [id_user], references: [id_user])
+  nombre_comercial     String?
+  departamento         String?
+  direccion            String?
+  tuestes              Int?           @default(0)
+  fecha_primera_compra DateTime?
+  suscripcion          Boolean        @default(false)
+  cant_suscripcion     Int?           @default(0)
+  lotes                Lote[]
+  lotesTostados        LoteTostado[]
+  muestras             Muestra[]
+  bolsas               Bolsa[]
+  pedidos              Pedido[]       @relation("Cliente")
+  paquetesCliente      Paquete[]      @relation("PaqueteCliente")
+  boxRespuestas        BoxRespuesta[]
+}
+
+model UserStaff {
+  id_user String  @id
+  user    User    @relation(fields: [id_user], references: [id_user])
+  cargo   String?
+  id_rol  String?
+  Rol     Rol?    @relation(fields: [id_rol], references: [id_rol])
+}
+
+model UserAdmin {
+  id_user String @id
+  user    User   @relation(fields: [id_user], references: [id_user])
 }
 
 model PasswordResetToken {
@@ -75,7 +100,7 @@ model Rol {
   activo      Boolean      @default(true)
   created_at  DateTime     @default(now())
   permisos    RolPermiso[]
-  usuarios    User[]
+  usuarios    UserStaff[]
 }
 
 model RolPermiso {
@@ -157,7 +182,7 @@ model Muestra {
   completado         Boolean             @default(false)
   inventarioMuestras InventarioMuestra[]
   analisis           Analisis?           @relation(fields: [id_analisis], references: [id_analisis])
-  user               User?               @relation(fields: [id_user], references: [id_user])
+  user               UserCliente?        @relation(fields: [id_user], references: [id_user])
   muestrasHistoricas Muestra_Analisis[]
 }
 
@@ -196,9 +221,9 @@ model Lote {
   proveedor        String?
   clasificacion    String?
   costo            Float?
-  precio_1        Float?
-  escala_2        Float?
-  escala_3        Float?
+  precio_1         Float?
+  escala_2         Float?
+  escala_3         Float?
   alias            String?
   boxOpcions       BoxOpcion[]
   boxRespuestas    BoxRespuesta[]
@@ -207,7 +232,7 @@ model Lote {
   ingresosCafe     IngresoCafe[]
   inventarioLotes  InventarioLote[]
   analisis         Analisis?        @relation(fields: [id_analisis], references: [id_analisis])
-  user             User?            @relation(fields: [id_user], references: [id_user])
+  user             UserCliente?     @relation(fields: [id_user], references: [id_user])
   LoteTostado      LoteTostado[]
   lotesHistoricos  Lote_Analisis[]
   pedidosDestino   Pedido[]         @relation("LoteDestino")
@@ -244,7 +269,7 @@ model LoteTostado {
   inventarios            InventarioProducto[]
   analisisRapido         AnalisisRapido?         @relation(fields: [id_analisis_rapido], references: [id_analisis_rapido])
   lote                   Lote                    @relation(fields: [id_lote], references: [id_lote])
-  usuario                User?                   @relation(fields: [id_user], references: [id_user])
+  usuario                UserCliente?            @relation(fields: [id_user], references: [id_user])
   PedidoEmbolsado        Pedido[]                @relation("PedidoLoteTostadoOrigen")
   PedidoOrigen           Pedido?                 @relation("PedidoLoteTostado")
   tuestes                Tueste[]
@@ -282,7 +307,7 @@ model Bolsa {
 
   loteTostado LoteTostado       @relation(fields: [id_lote_tostado], references: [id_lote_tostado])
   pedido      Pedido            @relation(fields: [id_pedido], references: [id_pedido])
-  user        User?             @relation(fields: [id_user], references: [id_user])
+  user        UserCliente?      @relation(fields: [id_user], references: [id_user])
   inventarios InventarioBolsa[]
 }
 
@@ -476,7 +501,7 @@ model BoxRespuesta {
   tueste_3        String
   boxTemplate     BoxTemplate @relation(fields: [id_box_template], references: [id_box_template])
   lote_elegido    Lote        @relation(fields: [id_cafe_elegido], references: [id_lote])
-  user            User        @relation(fields: [id_user], references: [id_user])
+  user            UserCliente @relation(fields: [id_user], references: [id_user])
 }
 
 model Variedad {
@@ -588,7 +613,7 @@ model Pedido {
   eliminado            Boolean   @default(false)
 
   // Relación con Usuario como Cliente
-  cliente            User?               @relation("Cliente", fields: [id_user], references: [id_user])
+  cliente            UserCliente?        @relation("Cliente", fields: [id_user], references: [id_user])
   // Relación con Usuario como quien lo creó
   creadoPor          User?               @relation("PedidoCreadoPor", fields: [creado_por_id], references: [id_user])
   // Relación con Usuario como quien lo completó
@@ -663,22 +688,22 @@ enum QuienPaga {
 model Paquete {
   id_paquete         String        @id @default(uuid())
   numero_correlativo String?       @unique
-  id_cliente         String
+  id_cliente         String?
   id_pedido_origen   String?
   estado             EstadoPaquete @default(EN_PREPARACION)
   comentario         String?
   eliminado          Boolean       @default(false)
   fecha_registro     DateTime      @default(now())
   fecha_editado      DateTime?
+  owned_by_store     Boolean       @default(false)
+  creado_por_id      String
+  preparado_por_id   String?
+  fecha_preparado    DateTime?
 
-  creado_por_id    String
-  preparado_por_id String?
-  fecha_preparado  DateTime?
-
-  cliente      User    @relation("PaqueteCliente", fields: [id_cliente], references: [id_user])
-  pedidoOrigen Pedido? @relation("PaqueteDeEmpaque", fields: [id_pedido_origen], references: [id_pedido])
-  creadoPor    User    @relation("PaqueteCreadoPor", fields: [creado_por_id], references: [id_user])
-  preparadoPor User?   @relation("PaquetePreparadoPor", fields: [preparado_por_id], references: [id_user])
+  cliente      UserCliente? @relation("PaqueteCliente", fields: [id_cliente], references: [id_user])
+  pedidoOrigen Pedido?      @relation("PaqueteDeEmpaque", fields: [id_pedido_origen], references: [id_pedido])
+  creadoPor    User         @relation("PaqueteCreadoPor", fields: [creado_por_id], references: [id_user])
+  preparadoPor User?        @relation("PaquetePreparadoPor", fields: [preparado_por_id], references: [id_user])
 
   items  PaqueteItem[]
   envios Envio[]

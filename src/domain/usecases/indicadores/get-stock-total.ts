@@ -1,5 +1,6 @@
 import { LoteRepository } from '../../repository/lote.repository';
 import { UserRepository } from '../../repository/user.repository';
+import { TipoUser } from '../../../enums/tipo-user.enum';
 
 export interface StockTotalResult {
   total: number;
@@ -21,9 +22,9 @@ export class GetStockTotal implements GetStockTotalUseCase {
     const lotes = await this.loteRepository.getLotes();
     const users = await this.userRepository.getAllUsers();
 
-    const userMap = new Map<string, string>(); // id_user -> rol
+    const userMap = new Map<string, TipoUser>(); // id_user -> tipo
     for (const user of users) {
-      if (!user.eliminado) userMap.set(user.id_user, user.rol);
+      if (!user.eliminado) userMap.set(user.id_user, user.tipo);
     }
 
     let total = 0;
@@ -36,14 +37,13 @@ export class GetStockTotal implements GetStockTotalUseCase {
       const peso = lote.peso || 0;
       total += peso;
 
-      // NOTA: igual que el bug original de clasificación — los lotes de tienda
-      // (owned_by_store: true) tienen id_user null, así que nunca caen en
-      // "admin" aquí. No truena (hay guard), pero totalAdmin queda incompleto.
-      // Avísame si quieres que lo cambie a owned_by_store como en clasificación.
-      const rol = lote.id_user ? userMap.get(lote.id_user) : null;
-      if (rol === 'admin') {
+      // "admin" = stock de la tienda. Un lote ya no puede pertenecer a un
+      // usuario interno (id_user apunta a UserCliente), así que la tienda se
+      // identifica por owned_by_store.
+      const tipo = lote.id_user ? userMap.get(lote.id_user) : null;
+      if (lote.owned_by_store) {
         totalAdmin += peso;
-      } else if (rol === 'cliente') {
+      } else if (tipo === TipoUser.CLIENTE) {
         totalCliente += peso;
       }
     }

@@ -23,12 +23,11 @@ export class GetPedidosByEstado implements GetPedidosByEstadoUseCase {
 
                 if (pedido.id_lote) {
                     const lote = await this.loteRepository.getLoteById(pedido.id_lote);
-                    if (lote?.id_user) {
-                        const user = await this.userRepository.getUserById(lote.id_user);
-                        if (user?.rol === 'admin') {
-                            estadoFacturacion = 'ES_NUESTRO';
-                            return { ...pedido, estadoFacturacion };
-                        }
+                    // "Es nuestro" = el lote es de la tienda. Antes se miraba si el
+                    // dueño era admin; ahora la tienda se identifica por owned_by_store.
+                    if (lote?.owned_by_store) {
+                        estadoFacturacion = 'ES_NUESTRO';
+                        return { ...pedido, estadoFacturacion };
                     }
                 }
 

@@ -1,4 +1,4 @@
-import { UserEntity } from "../../entities/user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 import { UserRepository } from "../../repository/user.repository";
 
 export interface GetUsersInternalUseCase {

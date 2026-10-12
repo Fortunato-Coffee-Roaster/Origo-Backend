@@ -1,7 +1,7 @@
 import { UserDataSource } from "../../domain/datasources/user.datasource";
 import { CreateUserDto } from "../../domain/dtos/user/create";
 import { UpdateUserDto } from "../../domain/dtos/user/update";
-import { UserEntity } from "../../domain/entities/user.entity";
+import { UserEntity } from "../../domain/entities/user/user.entity";
 import { UserRepository } from "../../domain/repository/user.repository";
 
 

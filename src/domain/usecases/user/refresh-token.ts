@@ -1,3 +1,4 @@
+// src/domain/usecases/user/refresh-token.ts
 import jwt from 'jsonwebtoken';
 import { envs } from '../../../config/envs';
 
@@ -14,7 +15,7 @@ export class RefreshAccessToken implements RefreshTokenUseCase {
         {
           id: payload.id,
           email: payload.email,
-          rol: payload.rol,
+          tipo: payload.tipo, // reemplaza al claim `rol`
         },
         envs.JWT_SECRET,
         { expiresIn: '50m' }

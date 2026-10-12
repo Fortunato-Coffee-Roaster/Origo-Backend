@@ -1,6 +1,5 @@
 import { CreateHistorialDto } from "../dtos/historial/create";
 import { HistorialEntity } from "../entities/historial.entity";
-import { UserEntity } from "../entities/user.entity";
 import { Prisma } from "@prisma/client";
 
 export abstract class HistorialRepository {

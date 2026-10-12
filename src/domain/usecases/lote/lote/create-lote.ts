@@ -13,6 +13,7 @@ import { HistorialAccion } from "../../../../enums/historial-accion.enum";
 import { TipoMovimiento } from "../../../../enums/tipo-movimiento.enum";
 import { EntidadInventario } from "../../../../enums/entidad-inventario.enum";
 import { CreateMovimientoAlmacenDto } from "../../../dtos/almacen/movimiento-almacen/create";
+import { TipoUser } from "../../../../enums/tipo-user.enum";
 
 
 export interface CreateLoteUseCase {
@@ -90,7 +91,7 @@ export class CreateLote implements CreateLoteUseCase {
         const user = dto.id_user
             ? await this.userRepository.getUserById(dto.id_user)
             : null;
-        const esCliente = user?.rol === 'cliente';
+        const esCliente = user?.tipo === TipoUser.CLIENTE;
 
         // CASO: lote derivado (cliente, con origen en un lote padre vía pedido).
         if (esCliente && id_c) {

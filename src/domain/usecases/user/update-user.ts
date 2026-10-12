@@ -1,7 +1,8 @@
+// src/domain/usecases/user/update-user.ts
 import { UpdateUserDto } from "../../dtos/user/update";
-import { UserEntity } from "../../entities/user.entity";
 import { UserRepository } from "../../repository/user.repository";
 import { Encryption } from "../../../config/bcrypt";
+import { UserEntity } from "../../entities/user/user.entity";
 
 export interface UpdateUserUseCase {
     execute(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity>;
@@ -13,22 +14,22 @@ export class UpdateUser implements UpdateUserUseCase {
     ) {}
 
     async execute(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+        // El tipo no viene en el body ni se puede editar: sale del usuario guardado.
+        const user = await this.userRepository.getUserById(id);
+        if (!user) throw new Error('Usuario no encontrado');
+
+        const cambios: { [key: string]: any } = { id_user: id };
         if (updateUserDto.password) {
-            const hashedPassword = await Encryption.hashPassword(updateUserDto.password);
-
-            const [error, dto] = UpdateUserDto.update({
-                ...updateUserDto,
-                id_user: id,
-                password: hashedPassword
-            });
-
-            if (error || !dto) {
-                throw new Error(error ?? 'No se pudo construir el DTO de actualización');
-            }
-
-            return this.userRepository.updateUser(id, dto);
+            cambios.password = await Encryption.hashPassword(updateUserDto.password);
         }
 
-        return this.userRepository.updateUser(id, updateUserDto);
+        // Arma el DTO de su tipo (cliente, staff o admin) y rechaza datos que
+        // pertenezcan a la tabla de otro tipo.
+        const [error, dto] = updateUserDto.paraTipo(user.tipo, cambios);
+        if (error || !dto) {
+            throw new Error(error ?? 'No se pudo construir el DTO de actualización');
+        }
+
+        return this.userRepository.updateUser(id, dto);
     }
 }

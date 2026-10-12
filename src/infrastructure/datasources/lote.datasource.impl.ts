@@ -122,11 +122,14 @@ export class LoteDataSourceImpl implements LoteDataSource {
   }
 
   async getUserByLote(id: string): Promise<string> {
+    // Los lotes ahora cuelgan de UserCliente, y el nombre sigue en User.
     const user = await prisma.user.findFirst({
       where: {
-        lotes: {
-          some: {
-            id_lote: id,
+        cliente: {
+          lotes: {
+            some: {
+              id_lote: id,
+            },
           },
         },
       },

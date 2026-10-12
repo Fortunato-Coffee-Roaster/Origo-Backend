@@ -1,13 +1,16 @@
-import jwt from 'jsonwebtoken';
+// src/domain/usecases/user/auth-user-pin.ts
 import { Encryption } from '../../../config/bcrypt';
-import { UserEntity } from '../../entities/user.entity';
+import { Jwt, TokenPayload } from '../../../config/jwt';
 import { UserRepository } from '../../repository/user.repository';
-import { envs } from '../../../config/envs';
+import { TipoUser } from '../../../enums/tipo-user.enum';
+import { UserEntity } from '../../entities/user/user.entity';
+import { UserStaffEntity } from '../../entities/user/user-staff.entity';
 
 interface AuthResult {
   accessToken: string;
   refreshToken: string;
-  user: Omit<UserEntity, 'password'>;
+  // Usuario sin password. id_rol va siempre: el del staff, o null si es admin.
+  user: Omit<UserEntity, 'password'> & { id_rol: string | null };
 }
 
 export interface AuthUserByPinUseCase {
@@ -21,24 +24,24 @@ export class AuthUserByPin implements AuthUserByPinUseCase {
     const user = await this.userRepository.findByDocumento(documento_identidad);
     if (!user) throw new Error('Usuario no encontrado');
 
-    if (user.rol === 'cliente') throw new Error('No tienes permisos para acceder');
+    if (user.tipo === TipoUser.CLIENTE) throw new Error('No tienes permisos para acceder');
     if (user.eliminado) throw new Error('Usuario no activo o eliminado');
 
     const valid = await Encryption.comparePassword(pin, user.password);
     if (!valid) throw new Error('PIN incorrecto');
 
-    const accessToken = jwt.sign(
-      { id: user.id_user, email: user.email, rolId: user.id_rol, rol: user.rol },
-      envs.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
-    const refreshToken = jwt.sign(
-      { id: user.id_user },
-      envs.JWT_REFRESH_SECRET,
-      { expiresIn: '1d' }
-    );
+    const payload: TokenPayload = {
+      id: user.id_user,
+      email: user.email,
+      // UUID del rol de permisos. Solo STAFF tiene rol; en ADMIN va null.
+      rolId: user instanceof UserStaffEntity ? user.id_rol : null,
+      tipo: user.tipo,
+    };
+
+    const accessToken = Jwt.signAccess(payload);
+    const refreshToken = Jwt.signRefresh(payload);
 
     const { password: _, ...userData } = user;
-    return { accessToken, refreshToken, user: userData };
+    return { accessToken, refreshToken, user: { ...userData, id_rol: payload.rolId } };
   }
 }
