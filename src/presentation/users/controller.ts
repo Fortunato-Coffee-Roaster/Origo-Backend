@@ -18,7 +18,6 @@ import { PasswordResetTokenRepository } from '../../domain/repository/passwordRe
 import { EmailService } from '../../config/email';
 import { ForgotPassword } from '../../domain/usecases/passwordResetToken/forgotPassword';
 import { ResetPassword } from '../../domain/usecases/passwordResetToken/resetPassword';
-import { TipoUser } from '@prisma/client';
 
 
 
@@ -159,18 +158,13 @@ export class UserController {
 
 
 
+  // ⚠️ PENDIENTE: este handler no envía respuesta cuando hay usuario.
+  // La doc de GET /me espera { id_user, email, nombre, tipo, id_rol, permisos }.
   public getSessionInfo = async (req: Request, res: Response) => {
     const user = req.user;
 
     if (!user) {
       return res.status(401).json({ message: 'No autenticado' });
-    }
-
-    interface JwtPayload {
-      id_user: string;
-      email: string;
-      id_rol: string | null;
-      tipo: TipoUser;
     }
   };
 
@@ -225,7 +219,7 @@ export class UserController {
 
   public changePassword = async (req: Request, res: Response) => {
     const id_user = req.params.id;
-    const requester = req.user as { id_user: string };
+    const requester = req.user;
 
     if (requester?.id_user !== id_user) {
       return res.status(403).json({ error: 'No tienes permiso para cambiar esta contraseña' });

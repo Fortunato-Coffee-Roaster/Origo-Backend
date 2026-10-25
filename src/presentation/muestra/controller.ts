@@ -14,6 +14,7 @@ import { GetMuestrasConInventario } from "../../domain/usecases/muestra/muestra-
 import { InventarioMuestraRepository } from "../../domain/repository/inventario-muestra.repository";
 import { GetMuestrasOwnedByStore } from "../../domain/usecases/muestra/get-muestras-owned-by-store";
 import { GetMuestrasByUserId } from "../../domain/usecases/muestra/get-muestras-user";
+import { TipoUser } from "../../enums/tipo-user.enum";
 
 export class MuestraController {
 
@@ -33,7 +34,7 @@ export class MuestraController {
 
     // 2. Un cliente no puede crear muestras (no debería ni tener acceso al ERP,
     //    pero se valida igual como defensa en profundidad)
-    if (req.user.rol === 'cliente') {
+    if (req.user.tipo === TipoUser.CLIENTE) {
       return res.status(403).json({ error: 'No tienes permisos para crear muestras' });
     }
 
