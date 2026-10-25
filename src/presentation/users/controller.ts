@@ -158,13 +158,28 @@ export class UserController {
 
 
 
-  // ⚠️ PENDIENTE: este handler no envía respuesta cuando hay usuario.
-  // La doc de GET /me espera { id_user, email, nombre, tipo, id_rol, permisos }.
   public getSessionInfo = async (req: Request, res: Response) => {
-    const user = req.user;
+    const sessionUser = req.user;
 
-    if (!user) {
+    if (!sessionUser) {
       return res.status(401).json({ message: 'No autenticado' });
+    }
+
+    try {
+      const user = await new GetUserById(this.userRepository).execute(sessionUser.id_user);
+      if (!user) {
+        return res.status(401).json({ message: 'Usuario no encontrado' });
+      }
+
+      return res.json({
+        id_user: sessionUser.id_user,
+        email: sessionUser.email,
+        nombre: user.nombre,
+        tipo: sessionUser.tipo,
+        id_rol: sessionUser.id_rol,
+      });
+    } catch (error) {
+      return this.handleError(res, error);
     }
   };
 
