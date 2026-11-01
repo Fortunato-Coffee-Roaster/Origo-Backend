@@ -23,6 +23,23 @@
 CREATE TEMP TABLE "_herencia_config" ON COMMIT DROP AS
 SELECT 'a3f8e2d0-1b4c-4e9a-9f6d-7c2b5a8e3d10'::text AS super_admin_rol_id;
 
+-- ───────────── Previo. Rol de super admin ─────────────
+-- Crea el rol (si no existe) y se lo asigna a los dos super admins,
+-- para que el paso 3 los clasifique como ADMIN.
+-- En una base sin usuarios (base nueva o base sombra de Prisma) no hace nada.
+INSERT INTO "Rol" ("id_rol", "nombre", "descripcion", "activo")
+SELECT super_admin_rol_id, 'Super Admin', 'Acceso total al sistema', true
+FROM "_herencia_config"
+WHERE EXISTS (SELECT 1 FROM "User")
+ON CONFLICT DO NOTHING;
+
+UPDATE "User"
+SET "id_rol" = (SELECT super_admin_rol_id FROM "_herencia_config")
+WHERE "id_user" IN (
+    '2b3879f6-e95a-447c-be0f-8f5a8e3b4c63', -- Renzo Vilchez
+    '25eba595-1556-4a90-a3c7-27edc759a127'  -- Renato Martinetti
+);
+
 -- ───────────── 0. Corrección de datos ─────────────
 -- Paquete: el cliente pasa a ser opcional y se agrega owned_by_store.
 ALTER TABLE "Paquete" ADD COLUMN "owned_by_store" BOOLEAN NOT NULL DEFAULT false,
