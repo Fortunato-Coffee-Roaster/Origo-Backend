@@ -18,9 +18,6 @@ export class UpdateLoteDto {
         public readonly id_analisis?: string,
         public readonly peso_tostado_g?: number,
         public readonly anio_cosecha?: number | null,
-        public readonly precio_1?: number | null,
-        public readonly escala_2?: number | null,
-        public readonly escala_3?: number | null,
     ) { }
 
     get values() {
@@ -39,10 +36,6 @@ export class UpdateLoteDto {
         if (this.costo !== undefined) returnObj.costo = this.costo;
         if (this.altura !== undefined) returnObj.altura = this.altura;
         if (this.anio_cosecha !== undefined) returnObj.anio_cosecha = this.anio_cosecha;
-
-        if (this.precio_1 !== undefined) returnObj.precio_1 = this.precio_1;
-        if (this.escala_2 !== undefined) returnObj.escala_2 = this.escala_2;
-        if (this.escala_3 !== undefined) returnObj.escala_3 = this.escala_3;
 
         return returnObj;
     }
@@ -65,9 +58,6 @@ export class UpdateLoteDto {
             id_analisis,
             peso_tostado_g,
             anio_cosecha,
-            precio_1,
-            escala_2,
-            escala_3,
         } = props;
 
         const alturaNum = toNullableInt(altura);
@@ -84,20 +74,6 @@ export class UpdateLoteDto {
         if (id_origen !== undefined && !id_origen) return ['El origen (id_origen) no puede quedar vacío', undefined];
         // id_proveedor: undefined = no se toca, '' o null = se quita el proveedor
         const idProveedorFinal = id_proveedor === undefined ? undefined : (id_proveedor || null);
-
-        const precio1Num = toNullableInt(precio_1);
-        const escala2Num = toNullableInt(escala_2);
-        const escala3Num = toNullableInt(escala_3);
-        const precios: [string, number | null | undefined][] = [
-            ['Precio 1', precio1Num],
-            ['Escala 2', escala2Num],
-            ['Escala 3', escala3Num],
-        ];
-        for (const [nombre, valor] of precios) {
-            if (typeof valor === 'number' && (isNaN(valor) || valor <= 0)) {
-                return [`${nombre} debe ser un número mayor a 0`, undefined];
-            }
-        }
 
         return [undefined,
             new UpdateLoteDto(
@@ -116,9 +92,6 @@ export class UpdateLoteDto {
                 id_analisis,
                 peso_tostado_g,
                 anioNum,
-                precio1Num,
-                escala2Num,
-                escala3Num,
             )];
     }
 }

@@ -47,6 +47,7 @@ import { PedidoItemRoutes } from "./pedido-item/routes";
 import { PaqueteItemRoutes } from "./paquete-item/routes";
 import { ProveedorRoutes } from "./proveedor/routes";
 import { OrigenRoutes } from "./origen/routes";
+import { PrecioLoteRoutes } from "./precio-lote/routes";
 
 
 export class AppRoutes {
@@ -60,6 +61,7 @@ export class AppRoutes {
         router.use('/analisisSensorial', AnalisisSensorialRoutes.routes);
         router.use('/analisisDefectos', AnalisisDefectosRoutes.routes);
 
+        router.use('/lote', PrecioLoteRoutes.routes); // antes de LoteRoutes: /lote/precios vs /lote/:id
         router.use('/lote', LoteRoutes.routes);
         router.use('/loteTostado', LoteTostadoRoutes.routes);
         router.use('/muestra', MuestraRoutes.routes);

@@ -25,9 +25,6 @@ export class LoteEntity {
         public id_user?: string,
         public id_analisis?: string,
         public peso_tostado_g?: number,
-        public precio_1?: number,
-        public escala_2?: number,
-        public escala_3?: number,
         public proveedor?: ProveedorResumen | null,
         public anio_cosecha?: number,
     ) { }
@@ -53,7 +50,6 @@ export class LoteEntity {
             id_analisis,
             peso_tostado_g,
             fecha_registro,
-            precio_1, escala_2, escala_3,
             proveedor, anio_cosecha,
         } = obj;
 
@@ -86,7 +82,6 @@ export class LoteEntity {
             id_user,
             id_analisis,
             peso_tostado_g,
-            precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
             proveedor ? { id_proveedor: proveedor.id_proveedor, nombre: proveedor.nombre } : null, anio_cosecha ?? undefined,
         );
     }
@@ -131,9 +126,6 @@ export class LoteConInventarioEntity {
     public id_user?: string,
     public id_analisis?: string,
     public peso_tostado_g?: number,
-    public precio_1?: number,
-    public escala_2?: number,
-    public escala_3?: number,
     public proveedor?: ProveedorResumen | null,
     public anio_cosecha?: number,
   ) {}
@@ -160,7 +152,6 @@ export class LoteConInventarioEntity {
       peso_tostado_g,
       fecha_registro,
       inventarioLotes,
-      precio_1, escala_2, escala_3,
       proveedor, anio_cosecha,
     } = obj;
 
@@ -207,7 +198,6 @@ export class LoteConInventarioEntity {
       id_user,
       id_analisis,
       peso_tostado_g,
-      precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
       proveedor ? { id_proveedor: proveedor.id_proveedor, nombre: proveedor.nombre } : null, anio_cosecha ?? undefined,
     );
   }

@@ -19,10 +19,6 @@ export class CreateLoteDto {
         public readonly peso_tostado_g?: number,
         public readonly id_proveedor?: string,
         public readonly anio_cosecha?: number,
-        // --- PRECIOS ---
-        public readonly precio_1?: number,
-        public readonly escala_2?: number,
-        public readonly escala_3?: number,
     ) { }
 
     static create(props: { [key: string]: any }): [string?, CreateLoteDto?] {
@@ -30,7 +26,6 @@ export class CreateLoteDto {
             id_lote, id_proveedor, productor, finca, id_origen, peso_g,
             variedades, proceso, tipo_lote, owned_by_store, clasificacion,
             costo, altura, id_user, peso_tostado_g, anio_cosecha,
-            precio_1, escala_2, escala_3,
         } = props;
 
         if (!productor) return ['El productor es requerido', undefined];
@@ -51,20 +46,6 @@ export class CreateLoteDto {
             return [`El año de cosecha debe estar entre 2000 y ${anioMax}`, undefined];
         }
 
-        const precio1Num = toOptionalInt(precio_1);
-        const escala2Num = toOptionalInt(escala_2);
-        const escala3Num = toOptionalInt(escala_3);
-        const precios: [string, number | undefined][] = [
-            ['Precio 1', precio1Num],
-            ['Escala 2', escala2Num],
-            ['Escala 3', escala3Num],
-        ];
-        for (const [nombre, valor] of precios) {
-            if (valor !== undefined && (isNaN(valor) || valor <= 0)) {
-                return [`${nombre} debe ser un número mayor a 0`, undefined];
-            }
-        }
-
         const esOwnedByStore = !!owned_by_store;
 
         if (esOwnedByStore && id_user) {
@@ -79,7 +60,6 @@ export class CreateLoteDto {
             proceso, tipo_lote, esOwnedByStore, clasificacion, costo, alturaNum,
             esOwnedByStore ? undefined : id_user, peso_tostado_g, id_proveedor || undefined,
             anioNum,
-            precio1Num, escala2Num, escala3Num,
         )];
     }
 
