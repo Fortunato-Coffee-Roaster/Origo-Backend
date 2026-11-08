@@ -45,6 +45,8 @@ import { PedidoBolsaRoutes } from "./pedido-bolsa/routes";
 import { PaqueteRoutes } from "./paquete/routes";
 import { PedidoItemRoutes } from "./pedido-item/routes";
 import { PaqueteItemRoutes } from "./paquete-item/routes";
+import { TipoSuscripcionRoutes } from "./suscripcion/tipo-suscripcion/routes";
+import { SuscripcionRoutes } from "./suscripcion/suscripcion/routes";
 
 
 export class AppRoutes {
@@ -103,6 +105,9 @@ export class AppRoutes {
         router.use('/rol', RolRoutes.routes);
         router.use('/permiso', PermisoRoutes.routes);
         router.use('/rol-permiso', RolPermisoRoutes.routes);
+
+        router.use('/tipo-suscripcion', TipoSuscripcionRoutes.routes);
+        router.use('/suscripcion', SuscripcionRoutes.routes);
 
 
         router.use('/p', PersonalizadoRoutes.routes);
