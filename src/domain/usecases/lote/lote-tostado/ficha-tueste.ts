@@ -31,8 +31,8 @@ export class GetFichaTueste implements FichaTuesteUseCase {
         const agtrom_gourmet = tuestes.reduce((t, r) => t + (r.agtrom_gourmet ?? 0), 0) / count;
         const tiempo = tuestes.reduce((t, r) => t + (r.tiempo_total ?? 0), 0) / count;
 
-        const pesoEntradaTotal = tuestes.reduce((t, r) => t + (r.peso_entrada ?? 0), 0);
-        const pesoSalidaTotal = tuestes.reduce((t, r) => t + (r.peso_salida ?? 0), 0);
+        const pesoEntradaTotal = tuestes.reduce((t, r) => t + (r.peso_entrada_g ?? 0), 0);
+        const pesoSalidaTotal = tuestes.reduce((t, r) => t + (r.peso_salida_g ?? 0), 0);
         const merma = pesoEntradaTotal > 0
             ? parseFloat((((pesoEntradaTotal - pesoSalidaTotal) / pesoEntradaTotal) * 100).toFixed(2))
             : 0;

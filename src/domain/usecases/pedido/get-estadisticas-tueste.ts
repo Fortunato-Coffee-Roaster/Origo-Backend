@@ -43,7 +43,7 @@ export class GetEstadisticasTueste implements GetEstadisticasTuesteUseCase {
 
     // 2. Kilos tostados en Candela
     const candela = tuestes.filter(t => t.tostadora === 'Candela');
-    const kilosTostadosCandela = candela.reduce((sum, t) => sum + t.peso_entrada, 0);
+    const kilosTostadosCandela = candela.reduce((sum, t) => sum + t.peso_entrada_g, 0);
 
     // 3. Batch tostados en Candela
     const batchTostadosCandela = candela.length;
@@ -63,7 +63,7 @@ export class GetEstadisticasTueste implements GetEstadisticasTuesteUseCase {
 
     // 6. Peso promedio por batch
     const pesoPromedioPorBatch = tuestes.length > 0
-      ? tuestes.reduce((sum, t) => sum + t.peso_entrada, 0) / tuestes.length
+      ? tuestes.reduce((sum, t) => sum + t.peso_entrada_g, 0) / tuestes.length
       : 0;
 
     // 7 y 8. Batch Fortunato vs terceros

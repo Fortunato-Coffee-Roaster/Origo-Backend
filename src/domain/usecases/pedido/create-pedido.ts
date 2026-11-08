@@ -73,7 +73,7 @@ export class CreatePedido implements CreatePedidoUseCase {
         // verificar que el lote tenga un inventario
         // verificar que el lote tenga suficiente peso para la cantidad solicitada en su almacen correspondiente
         const inventarioLote = await this.inventarioLoteRepository.getByLoteAndAlmacen(lote.id_lote, dto.id_almacen!);
-        if (!inventarioLote || inventarioLote.cantidad_kg < dto.cantidad) {
+        if (!inventarioLote || inventarioLote.cantidad_g < dto.cantidad) {
             throw new Error("Stock insuficiente en el almacén");
         }
 
@@ -93,7 +93,7 @@ export class CreatePedido implements CreatePedidoUseCase {
         // verificar que el lote tenga suficiente peso para la cantidad solicitada en su almacen correspondiente
         const cantidadVerde = dto.cantidad * 1.1765;
         const inventarioLote = await this.inventarioLoteRepository.getByLoteAndAlmacen(lote.id_lote, dto.id_almacen!);
-        if (!inventarioLote || inventarioLote.cantidad_kg < cantidadVerde) {
+        if (!inventarioLote || inventarioLote.cantidad_g < cantidadVerde) {
             throw new Error("Stock insuficiente en el almacén");
         }
 
@@ -145,7 +145,7 @@ export class CreatePedido implements CreatePedidoUseCase {
         const factor = 1.1765;
 
         // validar verde
-        if (inventarioLote.cantidad_kg < dto.cantidad) {
+        if (inventarioLote.cantidad_g < dto.cantidad) {
             throw new Error('No hay suficiente café verde disponible');
         }
 
@@ -203,7 +203,7 @@ export class CreatePedido implements CreatePedidoUseCase {
         const pedido = await this.pedidoRepository.createPedido(dto);
 
         // 6. Generar tuestes
-        if (!dto.pesos || dto.pesos.length === 0) {
+        if (!dto.pesos_g || dto.pesos_g.length === 0) {
             throw new Error('Los pesos son requeridos');
         }
 
@@ -211,7 +211,7 @@ export class CreatePedido implements CreatePedidoUseCase {
         const humidity = analisisFisico?.humedad ?? 0;
 
         let cant = 1;
-        for (const peso of dto.pesos) {
+        for (const peso of dto.pesos_g) {
 
             const tuestePayload = {
                 id_lote: lote.id_lote,
@@ -222,7 +222,7 @@ export class CreatePedido implements CreatePedidoUseCase {
                 owned_by_store: dto.owned_by_store,
                 densidad: density,
                 humedad: humidity,
-                peso_entrada: peso,
+                peso_entrada_g: peso,
                 id_pedido: pedido.id_pedido,
             };
 
@@ -262,8 +262,8 @@ export class CreatePedido implements CreatePedidoUseCase {
             dto.pedido.id_almacen!
         );
         if (!inventarioLoteTostado) throw new Error('No se encontró el inventario para el lote tostado y almacén especificados');
-        if (inventarioLoteTostado.cantidad_kg < totalSolicitadoGr) {
-            throw new Error(`Stock insuficiente. Se necesitan ${totalSolicitadoGr}gr, solo hay ${inventarioLoteTostado.cantidad_kg}gr`);
+        if (inventarioLoteTostado.cantidad_g < totalSolicitadoGr) {
+            throw new Error(`Stock insuficiente. Se necesitan ${totalSolicitadoGr}gr, solo hay ${inventarioLoteTostado.cantidad_g}gr`);
         }
 
         // 5. Crear pedido — ahora dto.pedido es el CreatePedidoDto limpio, sin bolsas

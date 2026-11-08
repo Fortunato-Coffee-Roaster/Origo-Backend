@@ -66,14 +66,14 @@ export class AjustarStockAlmacen implements AjustarStockAlmacenUseCase {
           throw new Error("No existe inventario del lote en el almacén indicado");
         }
 
-        cantidadAnterior = Number(inventarioActual.cantidad_kg);
+        cantidadAnterior = Number(inventarioActual.cantidad_g);
 
         if (cantidadAnterior === dto.nueva_cantidad) {
           throw new Error("No hay cambios que aplicar al inventario");
         }
 
         const [error, updateDto] = UpdateInventarioLoteDto.update({
-          cantidad_kg: dto.nueva_cantidad,
+          cantidad_g: dto.nueva_cantidad,
         });
 
         if (error || !updateDto) {
@@ -88,7 +88,7 @@ export class AjustarStockAlmacen implements AjustarStockAlmacenUseCase {
         if (dto.nueva_cantidad === 0) {
           const todosInventarios = await this.inventarioLoteRepository.getByLote(dto.id_entidad);
           const stockTotal = todosInventarios.reduce(
-            (sum, inv) => sum + Number(inv.cantidad_kg), 0
+            (sum, inv) => sum + Number(inv.cantidad_g), 0
           );
 
           if (stockTotal === 0) {
@@ -126,14 +126,14 @@ export class AjustarStockAlmacen implements AjustarStockAlmacenUseCase {
           throw new Error("No existe inventario del lote tostado en el almacén indicado");
         }
 
-        cantidadAnterior = Number(inventarioActual.cantidad_kg);
+        cantidadAnterior = Number(inventarioActual.cantidad_g);
 
         if (cantidadAnterior === dto.nueva_cantidad) {
           throw new Error("No hay cambios que aplicar al inventario");
         }
 
         const [error, updateDto] = UpdateInventarioLoteTostadoDto.update({
-          cantidad_kg: dto.nueva_cantidad,
+          cantidad_g: dto.nueva_cantidad,
         });
 
         if (error || !updateDto) {
@@ -148,7 +148,7 @@ export class AjustarStockAlmacen implements AjustarStockAlmacenUseCase {
         if (dto.nueva_cantidad === 0) {
           const todosInventarios = await this.inventarioLoteTostadoRepository.getByLote(dto.id_entidad);
           const stockTotal = todosInventarios.reduce(
-            (sum, inv) => sum + Number(inv.cantidad_kg), 0
+            (sum, inv) => sum + Number(inv.cantidad_g), 0
           );
 
           if (stockTotal === 0) {
@@ -186,14 +186,14 @@ export class AjustarStockAlmacen implements AjustarStockAlmacenUseCase {
           throw new Error("No existe inventario de la muestra en el almacén indicado");
         }
 
-        cantidadAnterior = Number(inventarioActual.peso);
+        cantidadAnterior = Number(inventarioActual.peso_g);
 
         if (cantidadAnterior === dto.nueva_cantidad) {
           throw new Error("No hay cambios que aplicar al inventario");
         }
 
         const [error, updateDto] = UpdateInventarioMuestraDto.update({
-          peso: dto.nueva_cantidad,
+          peso_g: dto.nueva_cantidad,
         });
 
         if (error || !updateDto) {

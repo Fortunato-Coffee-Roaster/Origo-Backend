@@ -3,7 +3,7 @@ export class CreateLoteTostadoDto {
         public id_lote_tostado: string,
         public id_lote: string,
         public fecha_tostado: Date,
-        public peso: number ,
+        public peso_g: number ,
         public perfil_tostado: string,
         public owned_by_store: boolean,
         public id_user?: string,
@@ -11,11 +11,11 @@ export class CreateLoteTostadoDto {
     ) {}
 
     static create(props: { [key: string]: any }): [string?, CreateLoteTostadoDto?] {
-        const { id_lote, fecha_tostado, perfil_tostado, peso, id_lote_tostado, owned_by_store, id_user, id_analisis_rapido } = props;
+        const { id_lote, fecha_tostado, perfil_tostado, peso_g, id_lote_tostado, owned_by_store, id_user, id_analisis_rapido } = props;
 
         if (!id_lote) return ['El id_lote es requerido', undefined];
         if (!perfil_tostado) return ['El perfil_tostado es requerido', undefined];
-        if (!peso) return ['El peso es requerido', undefined];
+        if (!peso_g) return ['El peso (g) es requerido', undefined];
         const newFechaTostado = new Date(fecha_tostado);
         if (isNaN(newFechaTostado.getTime())) {
             return ['La fecha_tostado no es válida', undefined];
@@ -27,7 +27,7 @@ export class CreateLoteTostadoDto {
                 id_lote_tostado,
                 id_lote,
                 newFechaTostado,
-                peso,
+                peso_g,
                 perfil_tostado,
                 owned_by_store ?? false,
                 id_user,

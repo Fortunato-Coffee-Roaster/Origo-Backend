@@ -12,7 +12,7 @@ export class CreateMuestraDto {
         public readonly finca: string,
         public readonly distrito: string,
         public readonly departamento: string,
-        public readonly peso: number,
+        public readonly peso_g: number,
         public readonly variedades: string[],
         public readonly proceso: string,
         public readonly id_user?: string,
@@ -25,7 +25,7 @@ export class CreateMuestraDto {
     static create(props: { [key: string]: any }): [string?, CreateMuestraDto?] {
         let {
             id_muestra, owned_by_store, proveedor, nombre_muestra, productor,
-            finca, distrito, departamento, peso, variedades, proceso, id_user, id_analisis,
+            finca, distrito, departamento, peso_g, variedades, proceso, id_user, id_analisis,
             provincia, anio_cosecha, altura,
         } = props;
 
@@ -33,7 +33,7 @@ export class CreateMuestraDto {
         if (!finca) return ['La finca es requerida', undefined];
         if (!distrito) return ['El distrito es requerido', undefined];
         if (!departamento) return ['El departamento es requerido', undefined];
-        if (!peso || peso <= 0) return ['El peso debe ser mayor a 0', undefined];
+        if (!peso_g || peso_g <= 0) return ['El peso (g) debe ser mayor a 0', undefined];
         if (!variedades) return ['Las variedades son requeridas', undefined];
         if (!proceso) return ['El proceso es requerido', undefined];
 
@@ -67,7 +67,7 @@ export class CreateMuestraDto {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             variedades,
             proceso,
             esOwnedByStore ? undefined : id_user,

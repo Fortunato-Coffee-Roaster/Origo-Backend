@@ -35,7 +35,7 @@ export class GetResumenTuesteLotePedido implements GetResumenTuesteLotePedidoUse
         id_tueste: tueste.id_tueste,
         id_lote: pedido.id_lote ?? '',
         fecha_tueste: tueste.fecha_tueste.toLocaleDateString('es-ES'),
-        peso: tueste.peso_entrada,
+        peso: tueste.peso_entrada_g,
         comentario: pedido.comentario ?? '',
       });
     }

@@ -27,7 +27,7 @@ export class GetStockTotal implements GetStockTotalUseCase {
     }
 
     // 2) Calcular total global
-    const total = lotes.reduce((acc, { peso = 0 }) => acc + peso, 0);
+    const total = lotes.reduce((acc, { peso_g = 0 }) => acc + peso_g, 0);
 
     // 3) Extraer IDs de usuario únicos (y filtrar nulos)
     const userIds = Array.from(
@@ -52,7 +52,7 @@ export class GetStockTotal implements GetStockTotalUseCase {
     let totalCliente   = 0;
 
     for (const lote of lotes) {
-      const peso = lote.peso ?? 0;
+      const peso = lote.peso_g ?? 0;
       const userId = lote.id_user;
 
       // Si no hay usuario, lo contamos como Fortunato

@@ -89,7 +89,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           throw new Error("No existe inventario del lote en el almacén origen");
         }
 
-        if (Number(inventarioOrigen.cantidad_kg) < dto.cantidad) {
+        if (Number(inventarioOrigen.cantidad_g) < dto.cantidad) {
           throw new Error("Stock insuficiente en el almacén origen");
         }
 
@@ -103,10 +103,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           destino: inventarioDestino,
         };
 
-        const nuevaCantidadOrigen = Number(inventarioOrigen.cantidad_kg) - dto.cantidad;
+        const nuevaCantidadOrigen = Number(inventarioOrigen.cantidad_g) - dto.cantidad;
 
         const [errorOrigen, updateOrigenDto] = UpdateInventarioLoteDto.update({
-          cantidad_kg: nuevaCantidadOrigen,
+          cantidad_g: nuevaCantidadOrigen,
         });
 
         if (errorOrigen || !updateOrigenDto) {
@@ -119,10 +119,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
         );
 
         if (inventarioDestino) {
-          const nuevaCantidadDestino = Number(inventarioDestino.cantidad_kg) + dto.cantidad;
+          const nuevaCantidadDestino = Number(inventarioDestino.cantidad_g) + dto.cantidad;
 
           const [errorDestino, updateDestinoDto] = UpdateInventarioLoteDto.update({
-            cantidad_kg: nuevaCantidadDestino,
+            cantidad_g: nuevaCantidadDestino,
           });
 
           if (errorDestino || !updateDestinoDto) {
@@ -137,7 +137,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           const [errorCreate, createDestinoDto] = CreateInventarioLoteDto.create({
             id_lote: dto.id_entidad,
             id_almacen: dto.id_almacen_destino,
-            cantidad_kg: dto.cantidad,
+            cantidad_g: dto.cantidad,
           });
 
           if (errorCreate || !createDestinoDto) {
@@ -170,7 +170,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           throw new Error("No existe inventario del lote tostado en el almacén origen");
         }
 
-        if (Number(inventarioOrigen.cantidad_kg) < dto.cantidad) {
+        if (Number(inventarioOrigen.cantidad_g) < dto.cantidad) {
           throw new Error("Stock insuficiente en el almacén origen");
         }
 
@@ -184,10 +184,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           destino: inventarioDestino,
         };
 
-        const nuevaCantidadOrigen = Number(inventarioOrigen.cantidad_kg) - dto.cantidad;
+        const nuevaCantidadOrigen = Number(inventarioOrigen.cantidad_g) - dto.cantidad;
 
         const [errorOrigen, updateOrigenDto] = UpdateInventarioLoteTostadoDto.update({
-          cantidad_kg: nuevaCantidadOrigen,
+          cantidad_g: nuevaCantidadOrigen,
         });
 
         if (errorOrigen || !updateOrigenDto) {
@@ -200,10 +200,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
         );
 
         if (inventarioDestino) {
-          const nuevaCantidadDestino = Number(inventarioDestino.cantidad_kg) + dto.cantidad;
+          const nuevaCantidadDestino = Number(inventarioDestino.cantidad_g) + dto.cantidad;
 
           const [errorDestino, updateDestinoDto] = UpdateInventarioLoteTostadoDto.update({
-            cantidad_kg: nuevaCantidadDestino,
+            cantidad_g: nuevaCantidadDestino,
           });
 
           if (errorDestino || !updateDestinoDto) {
@@ -218,7 +218,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           const [errorCreate, createDestinoDto] = CreateInventarioLoteTostadoDto.create({
             id_lote_tostado: dto.id_entidad,
             id_almacen: dto.id_almacen_destino,
-            cantidad_kg: dto.cantidad,
+            cantidad_g: dto.cantidad,
           });
 
           if (errorCreate || !createDestinoDto) {
@@ -251,7 +251,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           throw new Error("No existe inventario de la muestra en el almacén origen");
         }
 
-        if (Number(inventarioOrigen.peso) < dto.cantidad) {
+        if (Number(inventarioOrigen.peso_g) < dto.cantidad) {
           throw new Error("Stock insuficiente en el almacén origen");
         }
 
@@ -265,10 +265,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           destino: inventarioDestino,
         };
 
-        const nuevaCantidadOrigen = Number(inventarioOrigen.peso) - dto.cantidad;
+        const nuevaCantidadOrigen = Number(inventarioOrigen.peso_g) - dto.cantidad;
 
         const [errorOrigen, updateOrigenDto] = UpdateInventarioMuestraDto.update({
-          peso: nuevaCantidadOrigen,
+          peso_g: nuevaCantidadOrigen,
         });
 
         if (errorOrigen || !updateOrigenDto) {
@@ -281,10 +281,10 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
         );
 
         if (inventarioDestino) {
-          const nuevaCantidadDestino = Number(inventarioDestino.peso) + dto.cantidad;
+          const nuevaCantidadDestino = Number(inventarioDestino.peso_g) + dto.cantidad;
 
           const [errorDestino, updateDestinoDto] = UpdateInventarioMuestraDto.update({
-            peso: nuevaCantidadDestino,
+            peso_g: nuevaCantidadDestino,
           });
 
           if (errorDestino || !updateDestinoDto) {
@@ -299,7 +299,7 @@ export class TrasladarStockAlmacen implements TrasladarStockAlmacenUseCase {
           const [errorCreate, createDestinoDto] = CreateInventarioMuestraDto.create({
             id_muestra: dto.id_entidad,
             id_almacen: dto.id_almacen_destino,
-            peso: dto.cantidad,
+            peso_g: dto.cantidad,
           });
 
           if (errorCreate || !createDestinoDto) {

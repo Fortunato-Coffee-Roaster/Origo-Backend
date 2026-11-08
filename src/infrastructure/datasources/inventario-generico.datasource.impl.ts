@@ -10,13 +10,13 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
                 const inv = await tx.inventarioLote.findUnique({
                     where: { id_lote_id_almacen: { id_lote: item.id_entidad, id_almacen: item.id_almacen } },
                 });
-                return inv?.cantidad_kg ?? 0;
+                return inv?.cantidad_g ?? 0;
             }
             case 'LOTE_TOSTADO': {
                 const inv = await tx.inventarioLoteTostado.findUnique({
                     where: { id_lote_tostado_id_almacen: { id_lote_tostado: item.id_entidad, id_almacen: item.id_almacen } },
                 });
-                return inv?.cantidad_kg ?? 0;
+                return inv?.cantidad_g ?? 0;
             }
             case 'BOLSA': {
                 const inv = await tx.inventarioBolsa.findUnique({
@@ -45,7 +45,7 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
                 const inv = await tx.inventarioMuestra.findUnique({
                     where: { id_muestra_id_almacen: { id_muestra: item.id_entidad, id_almacen: item.id_almacen } },
                 });
-                return inv?.peso ?? 0;
+                return inv?.peso_g ?? 0;
             }
             default:
                 throw new Error(`Tipo de entidad de inventario no soportado: ${item.entidad}`);
@@ -57,13 +57,13 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
             case 'LOTE':
                 await tx.inventarioLote.update({
                     where: { id_lote_id_almacen: { id_lote: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { cantidad_kg: { decrement: item.cantidad } },
+                    data: { cantidad_g: { decrement: item.cantidad } },
                 });
                 return;
             case 'LOTE_TOSTADO':
                 await tx.inventarioLoteTostado.update({
                     where: { id_lote_tostado_id_almacen: { id_lote_tostado: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { cantidad_kg: { decrement: item.cantidad } },
+                    data: { cantidad_g: { decrement: item.cantidad } },
                 });
                 return;
             case 'BOLSA':
@@ -92,7 +92,7 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
             case 'MUESTRA':
                 await tx.inventarioMuestra.update({
                     where: { id_muestra_id_almacen: { id_muestra: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { peso: { decrement: item.cantidad } },
+                    data: { peso_g: { decrement: item.cantidad } },
                 });
                 return;
             default:
@@ -105,13 +105,13 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
             case 'LOTE':
                 await tx.inventarioLote.update({
                     where: { id_lote_id_almacen: { id_lote: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { cantidad_kg: { increment: item.cantidad } },
+                    data: { cantidad_g: { increment: item.cantidad } },
                 });
                 return;
             case 'LOTE_TOSTADO':
                 await tx.inventarioLoteTostado.update({
                     where: { id_lote_tostado_id_almacen: { id_lote_tostado: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { cantidad_kg: { increment: item.cantidad } },
+                    data: { cantidad_g: { increment: item.cantidad } },
                 });
                 return;
             case 'BOLSA':
@@ -140,7 +140,7 @@ export class InventarioGenericoDataSourceImpl implements InventarioGenericoDataS
             case 'MUESTRA':
                 await tx.inventarioMuestra.update({
                     where: { id_muestra_id_almacen: { id_muestra: item.id_entidad, id_almacen: item.id_almacen } },
-                    data: { peso: { increment: item.cantidad } },
+                    data: { peso_g: { increment: item.cantidad } },
                 });
                 return;
             default:

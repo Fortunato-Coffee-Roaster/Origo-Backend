@@ -4,7 +4,7 @@ export class InventarioMuestraEntity {
     public id_inventario: string,
     public id_muestra: string,
     public id_almacen: string,
-    public peso: number,
+    public peso_g: number,
     public fecha_registro: Date,
     public fecha_editado?: Date,
     public almacen?: any,
@@ -16,7 +16,7 @@ export class InventarioMuestraEntity {
       id_inventario,
       id_muestra,
       id_almacen,
-      peso,
+      peso_g,
       fecha_registro,
       fecha_editado,
       almacen,
@@ -26,11 +26,11 @@ export class InventarioMuestraEntity {
     if (!id_muestra) throw new Error('id_muestra property is required');
     if (!id_almacen) throw new Error('id_almacen property is required');
 
-    if (peso === undefined || peso === null) {
-      throw new Error('peso property is required');
+    if (peso_g === undefined || peso_g === null) {
+      throw new Error('peso_g property is required');
     }
-    if (typeof peso !== 'number' || isNaN(peso) || peso < 0) {
-      throw new Error('peso must be a number >= 0');
+    if (typeof peso_g !== 'number' || isNaN(peso_g) || peso_g < 0) {
+      throw new Error('peso_g must be a number >= 0');
     }
 
     if (!fecha_registro) throw new Error('fecha_registro property is required');
@@ -51,7 +51,7 @@ export class InventarioMuestraEntity {
       id_inventario,
       id_muestra,
       id_almacen,
-      peso,
+      peso_g,
       fr,
       fe,
       almacen

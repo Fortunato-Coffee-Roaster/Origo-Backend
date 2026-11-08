@@ -1,8 +1,8 @@
 export class UpdateAnalisisFisicoDto {
   private constructor(
     public readonly id_analisis_fisico: string,
-    public readonly peso_muestra?: number,
-    public readonly peso_pergamino?: number,
+    public readonly peso_muestra_g?: number,
+    public readonly peso_pergamino_g?: number,
     public readonly wa?: number,
     public readonly temperatura_wa?: number,
     public readonly humedad?: number,
@@ -14,9 +14,9 @@ export class UpdateAnalisisFisicoDto {
     public readonly superior_malla_16?: number,
     public readonly superior_malla_14?: number,
     public readonly menor_malla_14?: number,
-    public readonly peso_defectos?: number,
+    public readonly peso_defectos_g?: number,
     public readonly quaquers?: number,
-    public readonly peso_muestra_tostada?: number,
+    public readonly peso_muestra_tostada_g?: number,
     public readonly desarrollo?: number,
     public readonly porcentaje_caramelizacion?: number,  // corregido
     public readonly c_desarrollo?: number,
@@ -26,8 +26,8 @@ export class UpdateAnalisisFisicoDto {
   /** Sólo incluye en el UPDATE los campos definidos */
   get values() {
     const v: Record<string, any> = {};
-    if (this.peso_muestra     != null) v.peso_muestra = this.peso_muestra;
-    if (this.peso_pergamino   != null) v.peso_pergamino = this.peso_pergamino;
+    if (this.peso_muestra_g   != null) v.peso_muestra_g = this.peso_muestra_g;
+    if (this.peso_pergamino_g != null) v.peso_pergamino_g = this.peso_pergamino_g;
     if (this.wa               != null) v.wa = this.wa;
     if (this.temperatura_wa   != null) v.temperatura_wa = this.temperatura_wa;
     if (this.humedad          != null) v.humedad = this.humedad;
@@ -39,9 +39,9 @@ export class UpdateAnalisisFisicoDto {
     if (this.superior_malla_16 != null) v.superior_malla_16 = this.superior_malla_16;
     if (this.superior_malla_14 != null) v.superior_malla_14 = this.superior_malla_14;
     if (this.menor_malla_14   != null) v.menor_malla_14 = this.menor_malla_14;
-    if (this.peso_defectos    != null) v.peso_defectos = this.peso_defectos;
+    if (this.peso_defectos_g  != null) v.peso_defectos_g = this.peso_defectos_g;
     if (this.quaquers         != null) v.quaquers = this.quaquers;
-    if (this.peso_muestra_tostada != null) v.peso_muestra_tostada = this.peso_muestra_tostada;
+    if (this.peso_muestra_tostada_g != null) v.peso_muestra_tostada_g = this.peso_muestra_tostada_g;
     if (this.desarrollo       != null) v.desarrollo = this.desarrollo;
     if (this.porcentaje_caramelizacion != null) v.porcentaje_caramelizacion = this.porcentaje_caramelizacion;
     if (this.c_desarrollo     != null) v.c_desarrollo = this.c_desarrollo;
@@ -52,8 +52,8 @@ export class UpdateAnalisisFisicoDto {
   static update(props: { [key: string]: any }): [string?, UpdateAnalisisFisicoDto?] {
     const {
       id_analisis_fisico,
-      peso_muestra,
-      peso_pergamino,
+      peso_muestra_g,
+      peso_pergamino_g,
       wa,
       temperatura_wa,
       humedad,
@@ -65,9 +65,9 @@ export class UpdateAnalisisFisicoDto {
       superior_malla_16,
       superior_malla_14,
       menor_malla_14,
-      peso_defectos,
+      peso_defectos_g,
       quaquers,
-      peso_muestra_tostada,
+      peso_muestra_tostada_g,
       desarrollo,
       porcentaje_caramelizacion,
       c_desarrollo,
@@ -77,8 +77,8 @@ export class UpdateAnalisisFisicoDto {
 
     return [undefined, new UpdateAnalisisFisicoDto(
       id_analisis_fisico,
-      peso_muestra,
-      peso_pergamino,
+      peso_muestra_g,
+      peso_pergamino_g,
       wa,
       temperatura_wa,
       humedad,
@@ -90,9 +90,9 @@ export class UpdateAnalisisFisicoDto {
       superior_malla_16,
       superior_malla_14,
       menor_malla_14,
-      peso_defectos,
+      peso_defectos_g,
       quaquers,
-      peso_muestra_tostada,
+      peso_muestra_tostada_g,
       desarrollo,
       porcentaje_caramelizacion,
       c_desarrollo,

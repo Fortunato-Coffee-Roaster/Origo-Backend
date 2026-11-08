@@ -1,13 +1,13 @@
 export class UpdateInventarioMuestraDto {
 
   private constructor(
-    public readonly peso?: number,
+    public readonly peso_g?: number,
   ) {}
 
   get values() {
     const out: { [key: string]: any } = {};
-    if (this.peso !== undefined) {
-      out.peso = this.peso;
+    if (this.peso_g !== undefined) {
+      out.peso_g = this.peso_g;
       out.fecha_editado = new Date();
     }
     return out;
@@ -15,18 +15,18 @@ export class UpdateInventarioMuestraDto {
 
   static update(props: { [key: string]: any }): [string?, UpdateInventarioMuestraDto?] {
 
-    const { peso } = props;
+    const { peso_g } = props;
 
-    if (peso === undefined || peso === null) {
-      return ['peso es requerido', undefined];
+    if (peso_g === undefined || peso_g === null) {
+      return ['peso_g es requerido', undefined];
     }
 
-    const nPeso = typeof peso === 'string'
-      ? Number(peso)
-      : peso;
+    const nPeso = typeof peso_g === 'string'
+      ? Number(peso_g)
+      : peso_g;
 
     if (typeof nPeso !== 'number' || isNaN(nPeso) || nPeso < 0) {
-      return ['peso debe ser un número >= 0', undefined];
+      return ['peso_g debe ser un número >= 0', undefined];
     }
 
     return [

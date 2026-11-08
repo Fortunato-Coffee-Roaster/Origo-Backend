@@ -9,7 +9,7 @@ export class LoteEntity {
         public finca: string,
         public distrito: string,
         public departamento: string,
-        public peso: number,
+        public peso_g: number,
         public variedades: string[],
         public proceso: string,
         public tipo_lote: string,
@@ -21,7 +21,7 @@ export class LoteEntity {
         public altura?: number,
         public id_user?: string,
         public id_analisis?: string,
-        public peso_tostado?: number,
+        public peso_tostado_g?: number,
         public precio_1?: number,
         public escala_2?: number,
         public escala_3?: number,
@@ -37,7 +37,7 @@ export class LoteEntity {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             variedades,
             proceso,
             tipo_lote,
@@ -48,7 +48,7 @@ export class LoteEntity {
             altura,
             id_user,
             id_analisis,
-            peso_tostado,
+            peso_tostado_g,
             fecha_registro,
             precio_1, escala_2, escala_3,
             provincia, anio_cosecha,
@@ -70,7 +70,7 @@ export class LoteEntity {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             variedades,
             proceso,
             tipo_lote,
@@ -82,7 +82,7 @@ export class LoteEntity {
             altura,
             id_user,
             id_analisis,
-            peso_tostado,
+            peso_tostado_g,
             precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
             provincia ?? undefined, anio_cosecha ?? undefined,
         );
@@ -94,8 +94,8 @@ export interface InventarioLoteMini {
   id_inventario: string;
   id_lote: string;
   id_almacen: string;
-  cantidad_kg: number;
-  cantidad_tostado_kg?: number;
+  cantidad_g: number;
+  cantidad_tostado_g?: number;
   fecha_registro: Date;
   fecha_editado?: Date | null;
   almacen?: {
@@ -112,7 +112,7 @@ export class LoteConInventarioEntity {
     public finca: string,
     public distrito: string,
     public departamento: string,
-    public peso: number,
+    public peso_g: number,
     public variedades: string[],
     public proceso: string,
     public tipo_lote: string,
@@ -127,7 +127,7 @@ export class LoteConInventarioEntity {
     public altura?: number,
     public id_user?: string,
     public id_analisis?: string,
-    public peso_tostado?: number,
+    public peso_tostado_g?: number,
     public precio_1?: number,
     public escala_2?: number,
     public escala_3?: number,
@@ -143,7 +143,7 @@ export class LoteConInventarioEntity {
       finca,
       distrito,
       departamento,
-      peso,
+      peso_g,
       variedades,
       proceso,
       tipo_lote,
@@ -154,7 +154,7 @@ export class LoteConInventarioEntity {
       altura,
       id_user,
       id_analisis,
-      peso_tostado,
+      peso_tostado_g,
       fecha_registro,
       inventarioLotes,
       precio_1, escala_2, escala_3,
@@ -173,8 +173,8 @@ export class LoteConInventarioEntity {
           id_inventario: i.id_inventario,
           id_lote: i.id_lote,
           id_almacen: i.id_almacen,
-          cantidad_kg: Number(i.cantidad_kg ?? 0),
-          cantidad_tostado_kg: i.cantidad_tostado_kg ? Number(i.cantidad_tostado_kg) : undefined,
+          cantidad_g: Number(i.cantidad_g ?? 0),
+          cantidad_tostado_g: i.cantidad_tostado_g ? Number(i.cantidad_tostado_g) : undefined,
           fecha_registro: new Date(i.fecha_registro),
           fecha_editado: i.fecha_editado ? new Date(i.fecha_editado) : null,
           almacen: i.almacen
@@ -190,7 +190,7 @@ export class LoteConInventarioEntity {
       finca,
       distrito,
       departamento,
-      peso,
+      peso_g,
       variedades,
       proceso,
       tipo_lote,
@@ -203,7 +203,7 @@ export class LoteConInventarioEntity {
       altura,
       id_user,
       id_analisis,
-      peso_tostado,
+      peso_tostado_g,
       precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
       provincia ?? undefined, anio_cosecha ?? undefined,
     );

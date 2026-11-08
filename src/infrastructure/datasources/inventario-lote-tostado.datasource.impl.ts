@@ -15,7 +15,7 @@ export class InventarioLoteTostadoDataSourceImpl
       data: {
         id_lote_tostado: dto.id_lote_tostado,
         id_almacen: dto.id_almacen,
-        cantidad_kg: dto.cantidad_kg,
+        cantidad_g: dto.cantidad_g,
       },
     });
 

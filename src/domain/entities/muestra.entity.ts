@@ -13,7 +13,7 @@ export class MuestraEntity {
         public finca: string,
         public distrito: string,
         public departamento: string,
-        public peso: number,
+        public peso_g: number,
         public variedades: string,
         public proceso: string,
         public fecha_registro: Date,
@@ -36,7 +36,7 @@ export class MuestraEntity {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             variedades,
             proceso,
             fecha_registro,
@@ -49,7 +49,7 @@ export class MuestraEntity {
             altura,
         } = obj;
 
-        if (peso === undefined || peso === null) throw new Error('peso property is required');
+        if (peso_g === undefined || peso_g === null) throw new Error('peso_g property is required');
         if (!variedades) throw new Error('variedades property is required');
         if (!proceso) throw new Error('proceso property is required');
 
@@ -65,7 +65,7 @@ export class MuestraEntity {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             Array.isArray(variedades) ? variedades.join(', ') : variedades,
             proceso,
             newFechaRegistro,
@@ -90,7 +90,7 @@ export class MuestraConInventarioEntity {
         public finca: string,
         public distrito: string,
         public departamento: string,
-        public peso: number,
+        public peso_g: number,
         public variedades: string,
         public proceso: string,
         public fecha_registro: Date,
@@ -119,7 +119,7 @@ export class MuestraConInventarioEntity {
             muestra.finca,
             muestra.distrito,
             muestra.departamento,
-            muestra.peso,
+            muestra.peso_g,
             muestra.variedades,
             muestra.proceso,
             muestra.fecha_registro,

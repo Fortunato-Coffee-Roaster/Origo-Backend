@@ -30,9 +30,9 @@ export class GetStockClasificacion implements GetStockClasificacionUseCase {
       if (lote.tipo_lote !== 'Lote Verde') continue; // solo café verde
       if (lote.eliminado) continue;
 
-      // cantidad_kg está en GRAMOS -> convertir a kg
+      // cantidad_g está en GRAMOS -> convertir a kg
       const kg = (lote.inventarioLotes ?? [])
-        .reduce((sum, inv) => sum + (inv.cantidad_kg ?? 0), 0) / 1000;
+        .reduce((sum, inv) => sum + (inv.cantidad_g ?? 0), 0) / 1000;
 
       if (kg <= 0) continue; // sin stock actual, no aporta
 

@@ -15,7 +15,7 @@ export class InventarioMuestraDataSourceImpl
       data: {
         id_muestra: dto.id_muestra,
         id_almacen: dto.id_almacen,
-        peso: dto.peso,
+        peso_g: dto.peso_g,
       },
     });
 

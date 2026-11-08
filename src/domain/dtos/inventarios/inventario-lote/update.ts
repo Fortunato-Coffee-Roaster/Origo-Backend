@@ -1,32 +1,32 @@
 export class UpdateInventarioLoteDto {
 
   private constructor(
-    public readonly cantidad_kg?: number,
-    public readonly cantidad_tostado_kg?: number
+    public readonly cantidad_g?: number,
+    public readonly cantidad_tostado_g?: number
   ) {}
 
   get values() {
     const out: { [key: string]: any } = {};
-    if (this.cantidad_kg !== undefined) {out.cantidad_kg = this.cantidad_kg;}
-    if (this.cantidad_tostado_kg !== undefined) {out.cantidad_tostado_kg = this.cantidad_tostado_kg;}
+    if (this.cantidad_g !== undefined) {out.cantidad_g = this.cantidad_g;}
+    if (this.cantidad_tostado_g !== undefined) {out.cantidad_tostado_g = this.cantidad_tostado_g;}
     out.fecha_editado = new Date();
     return out;
   }
 
   static update(props: { [key: string]: any }): [string?, UpdateInventarioLoteDto?] {
 
-    const { cantidad_kg, cantidad_tostado_kg } = props;
+    const { cantidad_g, cantidad_tostado_g } = props;
 
-    if (cantidad_kg === undefined || cantidad_kg === null) {
-      return ['cantidad_kg es requerida', undefined];
+    if (cantidad_g === undefined || cantidad_g === null) {
+      return ['cantidad_g es requerida', undefined];
     }
 
 
     return [
       undefined,
       new UpdateInventarioLoteDto(
-        cantidad_kg, 
-        cantidad_tostado_kg
+        cantidad_g, 
+        cantidad_tostado_g
       )
     ];
   }

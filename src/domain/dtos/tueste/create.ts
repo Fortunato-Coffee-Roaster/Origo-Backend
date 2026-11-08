@@ -6,7 +6,7 @@ export class CreateTuesteDto {
         public readonly tostadora: string,
         public readonly densidad: number,
         public readonly humedad: number,
-        public readonly peso_entrada: number,
+        public readonly peso_entrada_g: number,
         public readonly id_pedido: string,
         public readonly owned_by_store: boolean,
         public readonly id_cliente?: string,
@@ -15,14 +15,14 @@ export class CreateTuesteDto {
     static create(props: { [key: string]: any }): [string?, CreateTuesteDto?] {
         const {
             id_lote, num_batch, fecha_tueste, tostadora, id_cliente,
-            densidad, humedad, peso_entrada, id_pedido, owned_by_store,
+            densidad, humedad, peso_entrada_g, id_pedido, owned_by_store,
         } = props;
 
         if (!id_lote) return ['ID de lote es requerido', undefined];
         if (!num_batch || num_batch <= 0) return ['Número de batch debe ser mayor a 0', undefined];
         if (!id_pedido) return ['ID de pedido es requerido', undefined];
         if (!tostadora) return ['Tostadora es requerida', undefined];
-        if (!peso_entrada) return ['Peso de entrada es requerido', undefined];
+        if (!peso_entrada_g) return ['Peso de entrada es requerido', undefined];
 
         const fechaParsed = new Date(fecha_tueste);
         if (fechaParsed.toString() === 'Invalid Date') return ['Fecha de tueste no es válida', undefined];
@@ -45,7 +45,7 @@ export class CreateTuesteDto {
                 tostadora,
                 densidad,
                 humedad,
-                peso_entrada,
+                peso_entrada_g,
                 id_pedido,
                 esOwnedByStore,
                 esOwnedByStore ? undefined : id_cliente,

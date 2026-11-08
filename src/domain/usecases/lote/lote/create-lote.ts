@@ -46,7 +46,7 @@ export class CreateLote implements CreateLoteUseCase {
             await this.inventarioLoteRepository.createInventario({
                 id_lote: lote.id_lote,
                 id_almacen: id_almacen,
-                cantidad_kg: lote.peso,
+                cantidad_g: lote.peso_g,
             });
 
             // Ingreso inicial de stock — mismo criterio que cualquier otra entrada a almacén.
@@ -55,7 +55,7 @@ export class CreateLote implements CreateLoteUseCase {
                 entidad: EntidadInventario.LOTE,
                 id_entidad_primario: lote.id_lote,
                 id_almacen_destino: id_almacen,
-                cantidad: lote.peso,
+                cantidad: lote.peso_g,
                 id_user: id_user_accion ?? createLoteDto.id_user!,
                 id_pedido: id_pedido,
                 objeto_despues: lote,

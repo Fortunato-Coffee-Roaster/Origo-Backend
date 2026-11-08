@@ -8,7 +8,7 @@ export class UpdateLoteDto {
         public readonly finca?: string,
         public readonly distrito?: string,
         public readonly departamento?: string,
-        public readonly peso?: number,
+        public readonly peso_g?: number,
         public readonly variedades?: string[],
         public readonly proceso?: string,
         public readonly tipo_lote?: string,
@@ -17,7 +17,7 @@ export class UpdateLoteDto {
         public readonly altura?: number | null,
         public readonly id_user?: string,
         public readonly id_analisis?: string,
-        public readonly peso_tostado?: number,
+        public readonly peso_tostado_g?: number,
         public readonly provincia?: string | null,
         public readonly anio_cosecha?: number | null,
         public readonly precio_1?: number | null,
@@ -35,8 +35,8 @@ export class UpdateLoteDto {
         if (this.proceso) returnObj.proceso = this.proceso;
         if (this.tipo_lote) returnObj.tipo_lote = this.tipo_lote;
         if (this.id_analisis) returnObj.id_analisis = this.id_analisis;
-        if (this.peso !== undefined) returnObj.peso = this.peso;
-        if (this.peso_tostado !== undefined) returnObj.peso_tostado = this.peso_tostado;
+        if (this.peso_g !== undefined) returnObj.peso_g = this.peso_g;
+        if (this.peso_tostado_g !== undefined) returnObj.peso_tostado_g = this.peso_tostado_g;
         if (this.clasificacion) returnObj.clasificacion = this.clasificacion;
         if (this.costo !== undefined) returnObj.costo = this.costo;
         if (this.altura !== undefined) returnObj.altura = this.altura;
@@ -58,7 +58,7 @@ export class UpdateLoteDto {
             finca,
             distrito,
             departamento,
-            peso,
+            peso_g,
             variedades,
             proceso,
             tipo_lote,
@@ -67,7 +67,7 @@ export class UpdateLoteDto {
             altura,
             id_user,
             id_analisis,
-            peso_tostado,
+            peso_tostado_g,
             provincia,
             anio_cosecha,
             precio_1,
@@ -111,7 +111,7 @@ export class UpdateLoteDto {
                 finca,
                 distrito,
                 departamento,
-                peso,
+                peso_g,
                 variedades,
                 proceso,
                 tipo_lote,
@@ -120,7 +120,7 @@ export class UpdateLoteDto {
                 alturaNum,
                 id_user,
                 id_analisis,
-                peso_tostado,
+                peso_tostado_g,
                 provinciaFinal,
                 anioNum,
                 precio1Num,

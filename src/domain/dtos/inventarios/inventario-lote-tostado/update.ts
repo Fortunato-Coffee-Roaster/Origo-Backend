@@ -1,13 +1,13 @@
 export class UpdateInventarioLoteTostadoDto {
 
   private constructor(
-    public readonly cantidad_kg?: number,
+    public readonly cantidad_g?: number,
   ) {}
 
   get values() {
     const out: { [key: string]: any } = {};
-    if (this.cantidad_kg !== undefined) {
-      out.cantidad_kg = this.cantidad_kg;
+    if (this.cantidad_g !== undefined) {
+      out.cantidad_g = this.cantidad_g;
       out.fecha_editado = new Date();
     }
     return out;
@@ -15,18 +15,18 @@ export class UpdateInventarioLoteTostadoDto {
 
   static update(props: { [key: string]: any }): [string?, UpdateInventarioLoteTostadoDto?] {
 
-    const { cantidad_kg } = props;
+    const { cantidad_g } = props;
 
-    if (cantidad_kg === undefined || cantidad_kg === null) {
-      return ['cantidad_kg es requerida', undefined];
+    if (cantidad_g === undefined || cantidad_g === null) {
+      return ['cantidad_g es requerida', undefined];
     }
 
-    const nCantidad = typeof cantidad_kg === 'string'
-      ? Number(cantidad_kg)
-      : cantidad_kg;
+    const nCantidad = typeof cantidad_g === 'string'
+      ? Number(cantidad_g)
+      : cantidad_g;
 
     if (typeof nCantidad !== 'number' || isNaN(nCantidad) || nCantidad < 0) {
-      return ['cantidad_kg debe ser un número >= 0', undefined];
+      return ['cantidad_g debe ser un número >= 0', undefined];
     }
 
     return [

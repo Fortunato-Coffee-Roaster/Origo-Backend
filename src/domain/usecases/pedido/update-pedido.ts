@@ -80,7 +80,7 @@ export class UpdatePedido implements UpdatePedidoUseCase {
 
     const nuevaCantidad = dto.cantidad ?? pedido.cantidad;
 
-    if (inventario.cantidad_kg < nuevaCantidad) {
+    if (inventario.cantidad_g < nuevaCantidad) {
       throw new Error('No hay suficiente cantidad disponible en el lote original');
     }
 
@@ -101,7 +101,7 @@ export class UpdatePedido implements UpdatePedidoUseCase {
     const nuevaCantidad = dto.cantidad ?? pedido.cantidad;
     const cantidadVerdeNecesaria = Math.ceil(nuevaCantidad * 1.1765);
 
-    if (inventario.cantidad_kg < cantidadVerdeNecesaria) {
+    if (inventario.cantidad_g < cantidadVerdeNecesaria) {
       throw new Error('No hay suficiente cantidad verde disponible en el lote original');
     }
 
@@ -124,7 +124,7 @@ export class UpdatePedido implements UpdatePedidoUseCase {
 
     const nuevaCantidad = dto.cantidad ?? pedido.cantidad;
 
-    if (inventario.cantidad_kg < nuevaCantidad) {
+    if (inventario.cantidad_g < nuevaCantidad) {
       throw new Error('No hay suficiente café verde disponible en el lote original');
     }
 
@@ -142,14 +142,14 @@ export class UpdatePedido implements UpdatePedidoUseCase {
 
     if (!tuestes || tuestes.length === 0) {
       debeRecrearTuestes = true;
-    } else if (!dto.pesos) {
+    } else if (!dto.pesos_g) {
       debeRecrearTuestes = false;
-    } else if (tuestes.length !== dto.pesos.length) {
+    } else if (tuestes.length !== dto.pesos_g.length) {
       debeRecrearTuestes = true;
     } else {
-      const pesosActuales = tuestes.map(t => t.peso_entrada);
+      const pesosActuales = tuestes.map(t => t.peso_entrada_g);
       for (let i = 0; i < pesosActuales.length; i++) {
-        if (pesosActuales[i] !== dto.pesos[i]) {
+        if (pesosActuales[i] !== dto.pesos_g[i]) {
           debeRecrearTuestes = true;
           break;
         }
@@ -171,13 +171,13 @@ export class UpdatePedido implements UpdatePedidoUseCase {
         }
       }
 
-      if (!dto.pesos) throw new Error('Los pesos son requeridos');
+      if (!dto.pesos_g) throw new Error('Los pesos son requeridos');
 
       const density = analisisFisico?.densidad ?? 0;
       const humidity = analisisFisico?.humedad ?? 0;
 
       let cant = 1;
-      for (const peso of dto.pesos) {
+      for (const peso of dto.pesos_g) {
         const [error, createTuesteDto] = CreateTuesteDto.create({
           id_lote: lote.id_lote,
           num_batch: cant,
@@ -187,7 +187,7 @@ export class UpdatePedido implements UpdatePedidoUseCase {
           owned_by_store: pedido.owned_by_store,
           densidad: density,
           humedad: humidity,
-          peso_entrada: peso,
+          peso_entrada_g: peso,
           id_pedido: pedido.id_pedido,
         });
 
@@ -245,10 +245,10 @@ export class UpdatePedido implements UpdatePedidoUseCase {
     );
     if (!inventarioLoteTostado)
       throw new Error('No se encontró inventario para el lote tostado en el almacén');
-    if (inventarioLoteTostado.cantidad_kg < totalSolicitadoGr) {
+    if (inventarioLoteTostado.cantidad_g < totalSolicitadoGr) {
       throw new Error(
         `Stock insuficiente. Se necesitan ${totalSolicitadoGr}gr, ` +
-        `solo hay ${inventarioLoteTostado.cantidad_kg}gr disponibles`
+        `solo hay ${inventarioLoteTostado.cantidad_g}gr disponibles`
       );
     }
 

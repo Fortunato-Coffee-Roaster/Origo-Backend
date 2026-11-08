@@ -36,11 +36,11 @@ export class BlendLotes implements BlendLotesUseCase {
             const lote = fetched.find(l => l?.id_lote === id);
             if (!lote) throw new Error(`El lote ${id} no existe`);
             if (lote.eliminado) throw new Error(`El lote ${id} está eliminado`);
-            if (lote.peso <= 0) throw new Error(`El lote ${id} tiene peso inválido`);
-            if (lote.peso < pesoRequerido) {
+            if (lote.peso_g <= 0) throw new Error(`El lote ${id} tiene peso inválido`);
+            if (lote.peso_g < pesoRequerido) {
                 throw new Error(
                     `El lote ${id} no tiene suficiente peso: ` +
-                    `disponible ${lote.peso} kg, pero solicitaste ${pesoRequerido} kg`
+                    `disponible ${lote.peso_g} g, pero solicitaste ${pesoRequerido} g`
                 );
             }
             return lote;
@@ -50,8 +50,8 @@ export class BlendLotes implements BlendLotesUseCase {
         await Promise.all(
             lotes.map(async ([id, peso]) => {
                 const lote = allLotes.find(l => l.id_lote === id)!;
-                const nuevoPeso = lote.peso - peso;
-                const [_, updateDto] = UpdateLoteDto.update({ peso: nuevoPeso });
+                const nuevoPeso = lote.peso_g - peso;
+                const [_, updateDto] = UpdateLoteDto.update({ peso_g: nuevoPeso });
                 await this.loteRepository.updateLote(id, updateDto!);
                 if (nuevoPeso <= 0) {
                     await this.loteRepository.deleteLote(id);
@@ -97,7 +97,7 @@ export class BlendLotes implements BlendLotesUseCase {
             finca: fincasStr,
             distrito: distritoStr,
             departamento: departamentosStr,
-            peso: pesoTotal,
+            peso_g: pesoTotal,
             variedades: { set: variedadesArr },
             proceso: procesosStr,
             tipo_lote: 'Lote Verde',

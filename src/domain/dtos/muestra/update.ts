@@ -10,7 +10,7 @@ export class UpdateMuestraDto {
     public readonly finca               ?: string,
     public readonly distrito            ?: string,
     public readonly departamento        ?: string,
-    public readonly peso                ?: number,
+    public readonly peso_g              ?: number,
     public readonly proceso             ?: string,
     public readonly variedades          ?: string,
     public readonly id_analisis         ?: string,
@@ -27,7 +27,7 @@ export class UpdateMuestraDto {
     if (this.finca) returnObj.finca = this.finca;
     if (this.distrito) returnObj.distrito = this.distrito;   // antes escribía en "provincia" por error
     if (this.departamento) returnObj.departamento = this.departamento;
-    if (this.peso) returnObj.peso = this.peso;
+    if (this.peso_g) returnObj.peso_g = this.peso_g;
     if (this.proceso) returnObj.proceso = this.proceso;
     if (this.variedades) returnObj.variedades = this.variedades;
     if (this.id_analisis) returnObj.id_analisis = this.id_analisis;
@@ -46,7 +46,7 @@ export class UpdateMuestraDto {
       finca,
       distrito,
       departamento,
-      peso,
+      peso_g,
       proceso,
       variedades,
       id_analisis,
@@ -80,7 +80,7 @@ export class UpdateMuestraDto {
         finca,
         distrito,
         departamento,
-        peso,
+        peso_g,
         proceso,
         variedades,
         id_analisis,

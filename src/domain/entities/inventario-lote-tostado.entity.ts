@@ -5,7 +5,7 @@ export class InventarioLoteTostadoEntity {
     public id_inventario: string,
     public id_lote_tostado: string,
     public id_almacen: string,
-    public cantidad_kg: number,
+    public cantidad_g: number,
     public fecha_registro: Date,
     public fecha_editado?: Date,
     public almacen?: AlmacenEntity
@@ -16,7 +16,7 @@ export class InventarioLoteTostadoEntity {
       id_inventario,
       id_lote_tostado,
       id_almacen,
-      cantidad_kg,
+      cantidad_g,
       fecha_registro,
       fecha_editado,
       almacen
@@ -40,7 +40,7 @@ export class InventarioLoteTostadoEntity {
       id_inventario,
       id_lote_tostado,
       id_almacen,
-      cantidad_kg,
+      cantidad_g,
       newFechaRegistro,
       newFechaEditado,
       almacen ? AlmacenEntity.fromObject(almacen) : undefined

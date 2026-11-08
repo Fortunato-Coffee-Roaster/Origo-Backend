@@ -34,7 +34,7 @@ export class GetStockTotal implements GetStockTotalUseCase {
     for (const lote of lotes) {
       if (lote.eliminado) continue;
 
-      const peso = lote.peso || 0;
+      const peso = lote.peso_g || 0;
       total += peso;
 
       // "admin" = stock de la tienda. Un lote ya no puede pertenecer a un

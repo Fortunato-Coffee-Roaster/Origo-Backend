@@ -5,7 +5,7 @@ export class UpdateTuesteDto {
         public readonly tostadora: string,
         public readonly densidad: number,
         public readonly humedad: number,
-        public readonly peso_entrada: number,
+        public readonly peso_entrada_g: number,
         public readonly temperatura_entrada: number,
         public readonly llama_inicial: number,
         public readonly aire_inicial: number,
@@ -20,15 +20,15 @@ export class UpdateTuesteDto {
         public readonly id_lote_tostado: string,
         public readonly agtrom_comercial: number,
         public readonly agtrom_gourmet: number,
-        public readonly peso_salida: number,   
-        public readonly merma: number,         
+        public readonly peso_salida_g: number,   
+        public readonly merma_porcentaje: number,         
     ) { }
 
     get values() {
         const returnObj: { [key: string]: any } = {};
         if (this.fecha_tueste) returnObj.fecha_tueste = this.fecha_tueste;
         if (this.tostadora) returnObj.tostadora = this.tostadora;
-        if (this.peso_entrada !== undefined) returnObj.peso_entrada = this.peso_entrada;
+        if (this.peso_entrada_g !== undefined) returnObj.peso_entrada_g = this.peso_entrada_g;
         if (this.densidad !== undefined) returnObj.densidad = this.densidad;
         if (this.humedad !== undefined) returnObj.humedad = this.humedad;
         if (this.temperatura_entrada !== undefined) returnObj.temperatura_entrada = this.temperatura_entrada;
@@ -45,8 +45,8 @@ export class UpdateTuesteDto {
         if (this.id_lote_tostado) returnObj.id_lote_tostado = this.id_lote_tostado;
         if (this.agtrom_comercial !== undefined) returnObj.agtrom_comercial = this.agtrom_comercial;
         if (this.agtrom_gourmet !== undefined) returnObj.agtrom_gourmet = this.agtrom_gourmet;
-        if (this.peso_salida !== undefined) returnObj.peso_salida = this.peso_salida;   
-        if (this.merma !== undefined) returnObj.merma = this.merma;                     
+        if (this.peso_salida_g !== undefined) returnObj.peso_salida_g = this.peso_salida_g;   
+        if (this.merma_porcentaje !== undefined) returnObj.merma_porcentaje = this.merma_porcentaje;                     
         return returnObj;
     }
 
@@ -57,7 +57,7 @@ export class UpdateTuesteDto {
             tostadora,
             densidad,
             humedad,
-            peso_entrada,
+            peso_entrada_g,
             temperatura_entrada,
             llama_inicial,
             aire_inicial,
@@ -72,8 +72,8 @@ export class UpdateTuesteDto {
             id_lote_tostado,
             agtrom_comercial,
             agtrom_gourmet,
-            peso_salida,   
-            merma,         
+            peso_salida_g,   
+            merma_porcentaje,         
         } = props;
 
         return [undefined, new UpdateTuesteDto(
@@ -82,7 +82,7 @@ export class UpdateTuesteDto {
             tostadora,
             densidad,
             humedad,
-            peso_entrada,
+            peso_entrada_g,
             temperatura_entrada,
             llama_inicial,
             aire_inicial,
@@ -97,8 +97,8 @@ export class UpdateTuesteDto {
             id_lote_tostado,
             agtrom_comercial,
             agtrom_gourmet,
-            peso_salida,   
-            merma,         
+            peso_salida_g,   
+            merma_porcentaje,         
         )];
     }
 }

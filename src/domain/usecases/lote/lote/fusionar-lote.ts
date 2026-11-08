@@ -39,23 +39,23 @@ export class FusionarLotes implements FusionarLoteUseCase {
     if (lote1.eliminado || lote2.eliminado) {
       throw new Error('Uno o más lotes están eliminados');
     }
-    if (lote2.peso < pesoTransferir) {
+    if (lote2.peso_g < pesoTransferir) {
       throw new Error('El lote origen no tiene suficiente peso para transferir');
     }
 
     // Calcular nuevos pesos
-    const nuevoPeso1 = lote1.peso + pesoTransferir;
-    const nuevoPeso2 = lote2.peso - pesoTransferir;
+    const nuevoPeso1 = lote1.peso_g + pesoTransferir;
+    const nuevoPeso2 = lote2.peso_g - pesoTransferir;
 
     // Actualizar lote1
-    const [err1, updateDto1] = UpdateLoteDto.update({ peso: nuevoPeso1 });
+    const [err1, updateDto1] = UpdateLoteDto.update({ peso_g: nuevoPeso1 });
     if (err1) {
       throw new Error(err1);
     }
     await this.loteRepository.updateLote(lote1.id_lote, updateDto1!);
 
     // Actualizar lote2
-    const [err2, updateDto2] = UpdateLoteDto.update({ peso: nuevoPeso2 });
+    const [err2, updateDto2] = UpdateLoteDto.update({ peso_g: nuevoPeso2 });
     if (err2) {
       throw new Error(err2);
     }

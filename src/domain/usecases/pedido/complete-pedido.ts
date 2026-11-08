@@ -112,7 +112,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
 
         // verificar que el lote origen tenga suficiente peso para la cantidad solicitada en su almacen correspondiente
         const inventarioLote = await this.inventarioLoteRepository.getByLoteAndAlmacen(loteOrigen.id_lote, pedido.id_almacen!);
-        if (!inventarioLote || inventarioLote.cantidad_kg < pedido.cantidad) {
+        if (!inventarioLote || inventarioLote.cantidad_g < pedido.cantidad) {
             throw new Error("Stock insuficiente en el almacén");
         }
 
@@ -127,7 +127,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
             const nuevoInventarioLote = await this.inventarioLoteRepository.createInventario({
                 id_lote: nuevoLoteDestino.id_lote!,
                 id_almacen: pedido.id_almacen!,
-                cantidad_kg: pedido.cantidad,
+                cantidad_g: pedido.cantidad,
             });
             //crear movimiento almacen, derivacion ya que el lote se parte 
             await this.registrarMovimiento({
@@ -165,12 +165,12 @@ export class CompletarPedido implements CompletarPedidoUseCase {
                 const nuevoInventarioLote = await this.inventarioLoteRepository.createInventario({
                     id_lote: hasLote,
                     id_almacen: pedido.id_almacen!,
-                    cantidad_kg: pedido.cantidad,
+                    cantidad_g: pedido.cantidad,
                 });
             } else {
                 // actualizar inventario sumando la cantidad del pedido al inventario existente
-                const nuevoPesoInventario = inventarioLoteExistente.cantidad_kg + pedido.cantidad;
-                const [error, updateInventarioLoteExistenteDto] = UpdateInventarioLoteDto.update({ cantidad_kg: nuevoPesoInventario });
+                const nuevoPesoInventario = inventarioLoteExistente.cantidad_g + pedido.cantidad;
+                const [error, updateInventarioLoteExistenteDto] = UpdateInventarioLoteDto.update({ cantidad_g: nuevoPesoInventario });
                 if (error) {
                     throw new Error(error);
                 }
@@ -221,8 +221,8 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         }
 
         // restar stock en lote origen
-        const nuevoPesoLote = inventarioLote.cantidad_kg - pedido.cantidad;
-        const [error, updateInventarioLoteDto] = UpdateInventarioLoteDto.update({ cantidad_kg: nuevoPesoLote });
+        const nuevoPesoLote = inventarioLote.cantidad_g - pedido.cantidad;
+        const [error, updateInventarioLoteDto] = UpdateInventarioLoteDto.update({ cantidad_g: nuevoPesoLote });
         if (error) {
             throw new Error(error);
         }
@@ -231,7 +231,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         if (nuevoPesoLote == 0) {
             const todosInventarios = await this.inventarioLoteRepository.getByLote(loteOrigen.id_lote);
             const stockTotal = todosInventarios.reduce(
-                (sum, inv) => sum + Number(inv.cantidad_kg), 0
+                (sum, inv) => sum + Number(inv.cantidad_g), 0
             );
 
             if (stockTotal === 0) {
@@ -270,7 +270,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         );
 
 
-        if (!inventarioLote || inventarioLote.cantidad_kg < cantidadVerde) {
+        if (!inventarioLote || inventarioLote.cantidad_g < cantidadVerde) {
             throw new Error("Stock insuficiente en el almacén");
         }
 
@@ -293,8 +293,8 @@ export class CompletarPedido implements CompletarPedidoUseCase {
             await this.inventarioLoteRepository.createInventario({
                 id_lote: nuevoLoteDestino.id_lote!,
                 id_almacen: pedido.id_almacen!,
-                cantidad_kg: cantidadVerde,
-                cantidad_tostado_kg: pedido.cantidad
+                cantidad_g: cantidadVerde,
+                cantidad_tostado_g: pedido.cantidad
             });
 
             await this.registrarMovimiento({
@@ -329,11 +329,11 @@ export class CompletarPedido implements CompletarPedidoUseCase {
                 throw new Error("Inventario del lote existente no encontrado");
             }
 
-            const nuevoPesoInventario = inventarioLoteExistente.cantidad_kg + cantidadVerde;
-            const nuevoTostado = (inventarioLoteExistente.cantidad_tostado_kg ?? 0) + pedido.cantidad;
+            const nuevoPesoInventario = inventarioLoteExistente.cantidad_g + cantidadVerde;
+            const nuevoTostado = (inventarioLoteExistente.cantidad_tostado_g ?? 0) + pedido.cantidad;
             const [error, updateInventarioLoteExistenteDto] = UpdateInventarioLoteDto.update({
-                cantidad_kg: nuevoPesoInventario,
-                cantidad_tostado_kg: nuevoTostado
+                cantidad_g: nuevoPesoInventario,
+                cantidad_tostado_g: nuevoTostado
             });
             if (error) {
                 throw new Error(error);
@@ -395,9 +395,9 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         }
 
         // descontar verde del lote origen
-        const nuevoPesoLote = inventarioLote.cantidad_kg - cantidadVerde;
+        const nuevoPesoLote = inventarioLote.cantidad_g - cantidadVerde;
         const [error, updateInventarioLoteDto] = UpdateInventarioLoteDto.update({
-            cantidad_kg: nuevoPesoLote
+            cantidad_g: nuevoPesoLote
         });
         if (error) {
             throw new Error(error);
@@ -415,7 +415,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         if (nuevoPesoLote === 0) {
             const todosInventarios = await this.inventarioLoteRepository.getByLote(loteOrigen.id_lote);
             const stockTotal = todosInventarios.reduce(
-                (sum, inv) => sum + Number(inv.cantidad_kg), 0
+                (sum, inv) => sum + Number(inv.cantidad_g), 0
             );
 
             if (stockTotal === 0) {
@@ -472,21 +472,21 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         }
 
         const pesoTotalTostado = tuestesDelPedido.reduce(
-            (total, t) => total + (t.peso_salida ?? 0),
+            (total, t) => total + (t.peso_salida_g ?? 0),
             0
         );
 
-        const nuevoPesoLote = inventarioLote.cantidad_kg - pedido.cantidad;
+        const nuevoPesoLote = inventarioLote.cantidad_g - pedido.cantidad;
 
         if (nuevoPesoLote < 0) {
             throw new Error("Inconsistencia: el peso verde quedó negativo al completar la orden de tueste");
         }
 
         const inventarioPayload: {
-            cantidad_kg: number;
+            cantidad_g: number;
             // cantidad_tostado_kg?: number;
         } = {
-            cantidad_kg: nuevoPesoLote
+            cantidad_g: nuevoPesoLote
         };
 
         // if (loteOrigen.tipo_lote === 'Lote Tostado') {
@@ -530,7 +530,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         if (nuevoPesoLote === 0) {
             const todosInventarios = await this.inventarioLoteRepository.getByLote(loteOrigen.id_lote);
             const stockTotal = todosInventarios.reduce(
-                (sum, inv) => sum + Number(inv.cantidad_kg), 0
+                (sum, inv) => sum + Number(inv.cantidad_g), 0
             );
 
             if (stockTotal === 0) {
@@ -549,7 +549,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         const [createLoteTostadoError, createLoteTostadoDto] = CreateLoteTostadoDto.create({
             id_lote: loteOrigen.id_lote,
             fecha_tostado: new Date(),
-            peso: pesoTotalTostado,
+            peso_g: pesoTotalTostado,
             perfil_tostado: pedido.comentario,
             id_user: pedido.id_user
         });
@@ -563,7 +563,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         await this.inventarioLoteTostadoRepository.createInventario({
             id_lote_tostado: loteTostado.id_lote_tostado,
             id_almacen: pedido.id_almacen,
-            cantidad_kg: pesoTotalTostado,
+            cantidad_g: pesoTotalTostado,
         });
 
         await this.registrarHistorial({
@@ -620,7 +620,7 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         }
 
         // 4. Calcular total en gramos que se necesita del inventario
-        //    gramaje viene en gramos, cantidad_kg en inventario también está en gramos
+        //    gramaje viene en gramos, cantidad_g en inventario también está en gramos
         //    → multiplicar directamente, sin conversión
         const totalSolicitadoGr = pedidoBolsas.reduce(
             (acc, b) => acc + b.gramaje * b.cantidad, 0
@@ -638,13 +638,13 @@ export class CompletarPedido implements CompletarPedidoUseCase {
         );
         if (!inventarioLoteTostado)
             throw new Error('No se encontró inventario del lote tostado en el almacén');
-        if (inventarioLoteTostado.cantidad_kg < totalSolicitadoGr) {
-            throw new Error(`Stock insuficiente. Se necesitan ${totalSolicitadoGr}gr, solo hay ${inventarioLoteTostado.cantidad_kg}gr`);
+        if (inventarioLoteTostado.cantidad_g < totalSolicitadoGr) {
+            throw new Error(`Stock insuficiente. Se necesitan ${totalSolicitadoGr}gr, solo hay ${inventarioLoteTostado.cantidad_g}gr`);
         }
 
         // 7. Descontar los gramos consumidos del inventario del lote tostado
-        const nuevoPesoLoteTostado = inventarioLoteTostado.cantidad_kg - totalSolicitadoGr;
-        const [, updateInvDto] = UpdateInventarioLoteTostadoDto.update({ cantidad_kg: nuevoPesoLoteTostado });
+        const nuevoPesoLoteTostado = inventarioLoteTostado.cantidad_g - totalSolicitadoGr;
+        const [, updateInvDto] = UpdateInventarioLoteTostadoDto.update({ cantidad_g: nuevoPesoLoteTostado });
         await this.inventarioLoteTostadoRepository.updateInventario(
             inventarioLoteTostado.id_inventario,
             updateInvDto!
