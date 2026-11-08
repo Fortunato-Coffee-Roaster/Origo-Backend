@@ -65,3 +65,37 @@ export const checkPermission = (permissionCode: string) => {
     }
   };
 };
+// No bloquea: deja en req.permisos[codigo] si el usuario tiene el permiso.
+// Sin usuario, sin rol o permiso inexistente en la BD = false. Úsalo después de authMiddleware.
+export const marcarPermiso = (permissionCode: string) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
+    req.permisos = req.permisos ?? {};
+    try {
+      const user = req.user;
+
+      if (user && envs.SUPER_ADMIN_ROL_ID && user.id_rol === envs.SUPER_ADMIN_ROL_ID) {
+        req.permisos[permissionCode] = true;
+        return next();
+      }
+
+      if (!user?.id_rol) {
+        req.permisos[permissionCode] = false;
+        return next();
+      }
+
+      const rol_permiso = await prisma.rolPermiso.findFirst({
+        where: {
+          id_rol: user.id_rol,
+          permiso: { codigo: permissionCode },
+        },
+      });
+
+      req.permisos[permissionCode] = !!rol_permiso;
+      next();
+    } catch (error) {
+      console.error('marcarPermiso error:', error);
+      req.permisos[permissionCode] = false;
+      next();
+    }
+  };
+};

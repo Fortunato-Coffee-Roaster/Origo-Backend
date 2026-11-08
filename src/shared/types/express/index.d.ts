@@ -5,6 +5,9 @@ declare global {
     interface Request {
       user?: JwtPayload;
 
+      // Permisos consultados sin bloquear (marcarPermiso).
+      permisos?: Record<string, boolean>;
+
       auditContext?: {
         entidad: string;
         accion: string;

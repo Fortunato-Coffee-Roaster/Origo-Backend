@@ -1,3 +1,5 @@
+import { CompraCafeDataSourceImpl } from "../../infrastructure/datasources/compra-cafe.datasource.impl";
+import { CompraCafeRepositoryImpl } from "../../infrastructure/repositories/compra-cafe.repository.impl";
 import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
 import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
 import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
@@ -28,7 +30,7 @@ import { AnalisisDefectosRespositoryImpl } from '../../infrastructure/repositori
 import PedidoRepositoryImpl from '../../infrastructure/repositories/pedido.repository.impl';
 import { HistorialRepositoryImpl } from '../../infrastructure/repositories/historial.repository.impl';
 import { HistorialDataSourceImpl } from '../../infrastructure/datasources/historial.datasource.impl';
-import { checkPermission } from '../../infrastructure/middlewares/permission.middleware';
+import { checkPermission, marcarPermiso } from "../../infrastructure/middlewares/permission.middleware";
 import { MovimientoAlmacenDataSourceImpl } from './../../infrastructure/datasources/movimiento-almacen.datasource.impl';
 import { MovimientoAlmacenRepositoryImpl } from '../../infrastructure/repositories/movimiento-almacen.repository.impl';
 
@@ -79,6 +81,7 @@ export class LoteRoutes {
         const movimientoAlmacenRepository = new MovimientoAlmacenRepositoryImpl(movimientoAlmacenDataSource);
 
         // Use cases
+        const compraCafeRepository = new CompraCafeRepositoryImpl(new CompraCafeDataSourceImpl());
         const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
         const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
 
@@ -90,7 +93,8 @@ export class LoteRoutes {
             movimientoAlmacenRepository,
             inventarioLoteRepository,
             origenRepository,
-            proveedorRepository
+            proveedorRepository,
+            compraCafeRepository
         );
 
         const loteController = new LoteController(
@@ -108,26 +112,32 @@ export class LoteRoutes {
             inventarioLoteRepository,
             movimientoAlmacenRepository,
             origenRepository,
-            proveedorRepository
+            proveedorRepository,
+            compraCafeRepository
         );
 
-        router.post('/', authMiddleware, loteController.createLote);
-        router.post('/muestra/:id', authMiddleware, loteController.createLoteFromMuestra);
-        router.post('/fusionar', authMiddleware, loteController.FusionarLotes);
-        router.post('/blend', authMiddleware, loteController.blendLotes);
-        router.put('/:id', authMiddleware, loteController.updateLote);
-        router.delete('/:id', authMiddleware, loteController.deleteLote);
+        // El costo del lote solo se envía con costeo.lotes-costo.read (no bloquea, solo lo oculta).
 
-        router.get('/tostados', loteController.getAllTostados);
-        router.get('/verdes', loteController.getAllVerdes);
-        router.get('/owned-by-store', loteController.getLotesOwnedByStore);
-        router.get('/roaster', loteController.getLotesRoaster);
-        router.get('/inventario', loteController.getLoteInventario);
-        router.get('/inventario/:id', loteController.getLoteInventarioById);
-        router.get('/user/:id', loteController.getLotesByUserId);
-        router.get('/byLote/:id', loteController.getUserByLote);
-        router.get('/', loteController.getLotes);
-        router.get('/:id', loteController.getLoteById);
+        const verCosto = marcarPermiso("costeo.lotes-costo.read");
+
+
+        router.post('/', authMiddleware, verCosto, loteController.createLote);
+        router.post('/muestra/:id', authMiddleware, verCosto, loteController.createLoteFromMuestra);
+        router.post('/fusionar', authMiddleware, verCosto, loteController.FusionarLotes);
+        router.post('/blend', authMiddleware, verCosto, loteController.blendLotes);
+        router.put('/:id', authMiddleware, verCosto, loteController.updateLote);
+        router.delete('/:id', authMiddleware, verCosto, loteController.deleteLote);
+
+        router.get('/tostados', authMiddleware, verCosto, loteController.getAllTostados);
+        router.get('/verdes', authMiddleware, verCosto, loteController.getAllVerdes);
+        router.get('/owned-by-store', authMiddleware, verCosto, loteController.getLotesOwnedByStore);
+        router.get('/roaster', authMiddleware, verCosto, loteController.getLotesRoaster);
+        router.get('/inventario', authMiddleware, verCosto, loteController.getLoteInventario);
+        router.get('/inventario/:id', authMiddleware, verCosto, loteController.getLoteInventarioById);
+        router.get('/user/:id', authMiddleware, verCosto, loteController.getLotesByUserId);
+        router.get('/byLote/:id', authMiddleware, loteController.getUserByLote);
+        router.get('/', authMiddleware, verCosto, loteController.getLotes);
+        router.get('/:id', authMiddleware, verCosto, loteController.getLoteById);
 
 
         return router;

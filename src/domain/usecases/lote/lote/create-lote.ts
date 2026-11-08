@@ -17,6 +17,8 @@ import { TipoUser } from "../../../../enums/tipo-user.enum";
 import { OrigenRepository } from "../../../repository/origen.repository";
 import { ProveedorRepository } from "../../../repository/proveedor.repository";
 import { validarOrigenProveedor } from "../../origen/validar-origen-proveedor";
+import { CompraCafeRepository } from "../../../repository/compra-cafe.repository";
+import { CreateCompraCafeDto } from "../../../dtos/lotes/compra-cafe/create";
 
 
 export interface CreateLoteUseCase {
@@ -34,6 +36,7 @@ export class CreateLote implements CreateLoteUseCase {
         private readonly inventarioLoteRepository: InventarioLoteRepository,
         private readonly origenRepository: OrigenRepository,
         private readonly proveedorRepository: ProveedorRepository,
+        private readonly compraCafeRepository: CompraCafeRepository,
     ) { }
 
     async execute(createLoteDto: CreateLoteDto, tueste?: Boolean, id_c?: string, id_almacen?: string, id_pedido?: string, id_user_accion?: string): Promise<LoteEntity> {
@@ -77,6 +80,22 @@ export class CreateLote implements CreateLoteUseCase {
             });
             if (movError || !movDto) throw new Error(movError ?? 'Error al construir movimiento de ingreso de lote');
             await this.movimientoAlmacenRepository.createMovimiento(movDto);
+
+            // Lote de tienda creado a mano = la tienda le compró el café a un proveedor.
+            // Se registra la primera compra (si no viene costo, queda en 0). Inventario y movimiento ya se crearon arriba.
+            if (lote.owned_by_store && !id_pedido && lote.peso_g > 0) {
+                const [compraError, compraDto] = CreateCompraCafeDto.create({
+                    id_lote: lote.id_lote,
+                    id_almacen,
+                    id_proveedor: lote.id_proveedor,
+                    cantidad_g: lote.peso_g,
+                    costo_compra_kg: createLoteDto.costo ?? 0,
+                    comentario: "Compra inicial al crear el lote",
+                    id_user: id_user_accion ?? createLoteDto.id_user,
+                });
+                if (compraError || !compraDto) throw new Error(compraError ?? "Error al construir la compra inicial del lote");
+                await this.compraCafeRepository.createCompra(compraDto);
+            }
         }
 
         // Historial de creación — único punto de entrada, sin importar si el lote

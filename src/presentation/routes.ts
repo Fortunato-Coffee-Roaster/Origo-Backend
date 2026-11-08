@@ -46,6 +46,7 @@ import { PaqueteRoutes } from "./paquete/routes";
 import { PedidoItemRoutes } from "./pedido-item/routes";
 import { PaqueteItemRoutes } from "./paquete-item/routes";
 import { ProveedorRoutes } from "./proveedor/routes";
+import { CompraCafeRoutes } from "./compra-cafe/routes";
 import { OrigenRoutes } from "./origen/routes";
 import { PrecioLoteRoutes } from "./precio-lote/routes";
 
@@ -66,6 +67,7 @@ export class AppRoutes {
         router.use('/loteTostado', LoteTostadoRoutes.routes);
         router.use('/muestra', MuestraRoutes.routes);
         router.use('/proveedor', ProveedorRoutes.routes);
+        router.use('/compra-cafe', CompraCafeRoutes.routes);
         router.use('/origen', OrigenRoutes.routes);
         router.use('/insumo', InsumoRoutes.routes);
         router.use('/bolsa', BolsaRoutes.routes);
@@ -119,6 +121,7 @@ export class AppRoutes {
         router.use('/box-opcion', BoxOpcionRoutes.routes);
         router.use('/box-respuesta', BoxRespuestaRoutes.routes);
 
+        // @deprecated Reemplazado por /compra-cafe (CompraCafe). Pendiente traspasar sus datos.
         router.use('/ingreso-cafe', IngresoCafeRoutes.routes);
 
         return router;

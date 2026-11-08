@@ -1,3 +1,5 @@
+import { CompraCafeDataSourceImpl } from "../../infrastructure/datasources/compra-cafe.datasource.impl";
+import { CompraCafeRepositoryImpl } from "../../infrastructure/repositories/compra-cafe.repository.impl";
 import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
 import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
 import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
@@ -142,6 +144,7 @@ export class PedidoRoutes {
         const paqueteItemRepository = new PaqueteItemRepositoryImpl(paqueteItemDatasource);
 
         // Use cases
+        const compraCafeRepository = new CompraCafeRepositoryImpl(new CompraCafeDataSourceImpl());
         const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
         const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
 
@@ -153,7 +156,8 @@ export class PedidoRoutes {
             movimientoAlmacenRepository,
             inventarioLoteRepository,
             origenRepository,
-            proveedorRepository
+            proveedorRepository,
+            compraCafeRepository
         );
 
         const CreateLoteTostadoUseCase = new CreateLoteTostado(

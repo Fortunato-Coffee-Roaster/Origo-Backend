@@ -1,3 +1,5 @@
+import { CompraCafeDataSourceImpl } from "../../infrastructure/datasources/compra-cafe.datasource.impl";
+import { CompraCafeRepositoryImpl } from "../../infrastructure/repositories/compra-cafe.repository.impl";
 import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
 import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
 import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
@@ -164,6 +166,8 @@ export class TuesteRoutes {
             loteRepository
         )
 
+        const compraCafeRepository = new CompraCafeRepositoryImpl(new CompraCafeDataSourceImpl());
+
         const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
         const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
 
@@ -175,7 +179,8 @@ export class TuesteRoutes {
             movimientoAlmacenRepository,
             inventarioLoteRepository,
             origenRepository,
-            proveedorRepository
+            proveedorRepository,
+            compraCafeRepository
         );
 
         const duplicateLote = new DuplicateLote(

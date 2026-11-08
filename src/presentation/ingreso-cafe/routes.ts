@@ -3,6 +3,7 @@ import { IngresoCafeDataSourceImpl } from "../../infrastructure/datasources/ingr
 import { IngresoCafeRepositoryImpl } from "../../infrastructure/repositories/ingreso-cafe.repository.impl";
 import { IngresoCafeController } from "./controller";
 
+// @deprecated Reemplazado por CompraCafe (/compra-cafe). No usar en código nuevo; pendiente traspasar sus datos.
 export class IngresoCafeRoutes {
   static get routes() {
     const router = Router();

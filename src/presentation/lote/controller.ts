@@ -36,6 +36,10 @@ import { GetLotesByUserId } from '../../domain/usecases/lote/lote/get-lotes-user
 import { GetLotesOwnedByStore } from '../../domain/usecases/lote/lote/get-lotes-owned-by-store';
 import { OrigenRepository } from '../../domain/repository/origen.repository';
 import { ProveedorRepository } from '../../domain/repository/proveedor.repository';
+import { CompraCafeRepository } from "../../domain/repository/compra-cafe.repository";
+import { AplicarCostoLotes } from "../../domain/usecases/lote/costo/aplicar-costo-lotes";
+
+const PERMISO_VER_COSTO = "costeo.lotes-costo.read";
 
 
 export class LoteController {
@@ -56,7 +60,12 @@ export class LoteController {
         private readonly movimientoAlmacenRepository: MovimientoAlmacenRepository,
         private readonly origenRepository: OrigenRepository,
         private readonly proveedorRepository: ProveedorRepository,
+        private readonly compraCafeRepository: CompraCafeRepository,
     ) { }
+
+    // Quita o calcula el costo según req.permisos (lo marca marcarPermiso en las rutas).
+    private conCosto = <T extends Parameters<AplicarCostoLotes["execute"]>[0]>(req: Request, lotes: T): Promise<T> =>
+        new AplicarCostoLotes(this.compraCafeRepository).execute(lotes, req.permisos?.[PERMISO_VER_COSTO] === true);
 
     public createLote = async (req: Request, res: Response) => {
         if (!req.user?.id_user) {
@@ -103,9 +112,8 @@ export class LoteController {
 
         this.createLoteUseCase
             .execute(createLoteDto!, undefined, undefined, idAlmacen, undefined, req.user.id_user)
-            .then(lote => {
-                res.json(lote);
-            })
+            .then(lote => this.conCosto(req, lote))
+            .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error: error.message ?? error }));
     }
 
@@ -120,18 +128,16 @@ export class LoteController {
         const lote_before = await this.loteRepository.getLoteById(id_lote);
         new UpdateLote(this.loteRepository, this.origenRepository, this.proveedorRepository)
             .execute(req.params.id, updateLoteDto!)
-            .then(lote => {
-                res.json(lote)
-            })
+            .then(lote => this.conCosto(req, lote))
+            .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error }));
     }
 
     public deleteLote = (req: Request, res: Response) => {
         new DeleteLote(this.loteRepository)
             .execute(req.params.id)
-            .then(lote => {
-                res.json(lote)
-            })
+            .then(lote => this.conCosto(req, lote))
+            .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error }));
     }
 
@@ -185,9 +191,8 @@ export class LoteController {
             this.loteRepository
         )
             .execute(id_muestra, createLoteDto, req.user.id_user, idAlmacen)
-            .then(lote => {
-                res.json(lote);
-            })
+            .then(lote => this.conCosto(req, lote))
+            .then(lote => res.json(lote))
             .catch(error => {
                 console.log('Error en createLoteFromMuestra:', error);
                 res.status(400).json({ error: error.message ?? String(error) });
@@ -206,6 +211,7 @@ export class LoteController {
             this.userRepository
         )
             .execute(dto!)
+            .then(lote => this.conCosto(req, lote))
             .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error }));
     }
@@ -220,6 +226,7 @@ export class LoteController {
             this.loteRepository
         )
             .execute(dto!)
+            .then(lote => this.conCosto(req, lote))
             .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error }));
     }
@@ -227,6 +234,7 @@ export class LoteController {
     public getLoteById = (req: Request, res: Response) => {
         new GetLoteById(this.loteRepository)
             .execute(req.params.id)
+            .then(lote => this.conCosto(req, lote))
             .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error }));
     }
@@ -234,6 +242,7 @@ export class LoteController {
         const incluirEliminados = req.query.incluirEliminados === 'true';
         new GetLotesByUserId(this.loteRepository)
             .execute(req.params.id, incluirEliminados)
+            .then(lotes => this.conCosto(req, lotes))
             .then(lotes => res.json(lotes))
             .catch(error => res.status(400).json({ error: error?.message ?? String(error) }));
     }
@@ -241,12 +250,14 @@ export class LoteController {
     public getAllTostados = async (req: Request, res: Response) => {
         new GetALLLotesTostados(this.loteRepository)
             .execute()
+            .then(tuestes => this.conCosto(req, tuestes))
             .then(tuestes => res.json(tuestes))
             .catch(error => res.status(400).json({ error }));
     }
     public getAllVerdes = async (req: Request, res: Response) => {
         new GetAllLotesVerdes(this.loteRepository)
             .execute()
+            .then(tuestes => this.conCosto(req, tuestes))
             .then(tuestes => res.json(tuestes))
             .catch(error => res.status(400).json({ error }));
     }
@@ -261,6 +272,7 @@ export class LoteController {
     public getLotes = (req: Request, res: Response) => {
         new GetLotes(this.loteRepository)
             .execute()
+            .then(lotes => this.conCosto(req, lotes))
             .then(lotes => res.json(lotes))
             .catch(error => res.status(400).json({ error }));
     }
@@ -270,6 +282,7 @@ export class LoteController {
             this.userRepository
         )
             .execute()
+            .then(lotes => this.conCosto(req, lotes))
             .then(lotes => res.json(lotes))
             .catch(error => res.status(400).json({ error })
             )
@@ -278,6 +291,7 @@ export class LoteController {
         const incluirEliminados = req.query.incluirEliminados === 'true';
         new GetLoteInventario(this.loteRepository)
             .execute(incluirEliminados)
+            .then(lotes => this.conCosto(req, lotes))
             .then(lotes => res.json(lotes))
             .catch(error => res.status(400).json({ error })
             )
@@ -287,10 +301,8 @@ export class LoteController {
         const id = req.params.id;
         new GetLoteInventarioById(this.loteRepository)
             .execute(id)
-            .then(lote => {
-
-                res.json(lote);
-            })
+            .then(lote => this.conCosto(req, lote))
+            .then(lote => res.json(lote))
             .catch(error => res.status(400).json({ error })
             )
     }
@@ -298,6 +310,7 @@ export class LoteController {
         const incluirEliminados = req.query.incluirEliminados === 'true';
         new GetLotesOwnedByStore(this.loteRepository)
             .execute(incluirEliminados)
+            .then(lotes => this.conCosto(req, lotes))
             .then(lotes => res.json(lotes))
             .catch(error => res.status(400).json({ error }));
     }

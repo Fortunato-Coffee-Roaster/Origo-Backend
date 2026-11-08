@@ -27,6 +27,8 @@ export class LoteEntity {
         public peso_tostado_g?: number,
         public proveedor?: ProveedorResumen | null,
         public anio_cosecha?: number,
+        // Calculado (promedio ponderado de CompraCafe). Solo se envía con costeo.lotes-costo.read.
+        public costo_kg?: number | null,
     ) { }
 
     public static fromObject(obj: { [key: string]: any }): LoteEntity {
@@ -128,6 +130,8 @@ export class LoteConInventarioEntity {
     public peso_tostado_g?: number,
     public proveedor?: ProveedorResumen | null,
     public anio_cosecha?: number,
+    // Calculado (promedio ponderado de CompraCafe). Solo se envía con costeo.lotes-costo.read.
+    public costo_kg?: number | null,
   ) {}
 
   static fromObject(obj: { [key: string]: any }): LoteConInventarioEntity {
