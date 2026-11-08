@@ -1,3 +1,7 @@
+import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
+import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
+import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
+import { ProveedorRepositoryImpl } from "../../infrastructure/repositories/proveedor.repository.impl";
 import { InventarioLoteRepositoryImpl } from './../../infrastructure/repositories/inventario-lote.repository.impl';
 import { InventarioLoteDataSourceImpl } from './../../infrastructure/datasources/inventario-lote.datasource.impl';
 import { LoteAnalisisDataSourceImpl } from './../../infrastructure/datasources/lote-analisis.datasource.impl';
@@ -75,13 +79,18 @@ export class LoteRoutes {
         const movimientoAlmacenRepository = new MovimientoAlmacenRepositoryImpl(movimientoAlmacenDataSource);
 
         // Use cases
+        const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
+        const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
+
         const createLoteUseCase = new CreateLote(
             loteRepository,
             userRepository,
             pedidoRepository,
             historialRepository,
             movimientoAlmacenRepository,
-            inventarioLoteRepository
+            inventarioLoteRepository,
+            origenRepository,
+            proveedorRepository
         );
 
         const loteController = new LoteController(
@@ -97,7 +106,9 @@ export class LoteRoutes {
             pedidoRepository,
             historialRepository,
             inventarioLoteRepository,
-            movimientoAlmacenRepository
+            movimientoAlmacenRepository,
+            origenRepository,
+            proveedorRepository
         );
 
         router.post('/', authMiddleware, loteController.createLote);

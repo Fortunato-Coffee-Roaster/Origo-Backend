@@ -45,6 +45,8 @@ import { PedidoBolsaRoutes } from "./pedido-bolsa/routes";
 import { PaqueteRoutes } from "./paquete/routes";
 import { PedidoItemRoutes } from "./pedido-item/routes";
 import { PaqueteItemRoutes } from "./paquete-item/routes";
+import { ProveedorRoutes } from "./proveedor/routes";
+import { OrigenRoutes } from "./origen/routes";
 
 
 export class AppRoutes {
@@ -61,6 +63,8 @@ export class AppRoutes {
         router.use('/lote', LoteRoutes.routes);
         router.use('/loteTostado', LoteTostadoRoutes.routes);
         router.use('/muestra', MuestraRoutes.routes);
+        router.use('/proveedor', ProveedorRoutes.routes);
+        router.use('/origen', OrigenRoutes.routes);
         router.use('/insumo', InsumoRoutes.routes);
         router.use('/bolsa', BolsaRoutes.routes);
 

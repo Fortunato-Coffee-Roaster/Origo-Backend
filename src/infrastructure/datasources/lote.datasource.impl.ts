@@ -5,12 +5,19 @@ import { CreateLoteRapidoDto } from "../../domain/dtos/lotes/lote/create-rapido"
 import { UpdateLoteDto } from "../../domain/dtos/lotes/lote/update";
 import { LoteConInventarioEntity, LoteEntity } from "../../domain/entities/lote.entity";
 
+// Lote se devuelve con su origen y un resumen del proveedor.
+const LOTE_RELACIONES = {
+  origen: true,
+  proveedor: { select: { id_proveedor: true, nombre: true } },
+} as const;
+
 
 export class LoteDataSourceImpl implements LoteDataSource {
 
 
   async createLote(createLoteDto: CreateLoteDto): Promise<LoteEntity> {
     const lote = await prisma.lote.create({
+      include: LOTE_RELACIONES,
       data: createLoteDto!
     });
     return LoteEntity.fromObject(lote);
@@ -18,6 +25,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
 
   async createLoteRapido(dto: CreateLoteRapidoDto): Promise<LoteEntity> {
     const lote = await prisma.lote.create({
+      include: LOTE_RELACIONES,
       data: dto
     });
 
@@ -26,6 +34,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
 
   async getLoteById(id: string): Promise<LoteEntity | null> {
     const lote = await prisma.lote.findUnique({
+      include: LOTE_RELACIONES,
       where: {
         id_lote: id
       }
@@ -37,6 +46,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
   async updateLote(id: string, updateLoteDto: UpdateLoteDto): Promise<LoteEntity> {
     const lote = await this.getLoteById(id);
     const updatedLote = await prisma.lote.update({
+      include: LOTE_RELACIONES,
       where: { id_lote: id },
       data: { ...updateLoteDto.values, eliminado: false }
     });
@@ -46,6 +56,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
   async deleteLote(id: string): Promise<LoteEntity> {
     const lote = await this.getLoteById(id);
     const deletedLote = await prisma.lote.update({
+      include: LOTE_RELACIONES,
       where: { id_lote: id },
       data: { eliminado: true }
     });
@@ -54,6 +65,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
 
   async getLotes(): Promise<LoteEntity[]> {
     const lotes = await prisma.lote.findMany({
+      include: LOTE_RELACIONES,
       where: {
         eliminado: false,
       }
@@ -72,6 +84,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
     if (!Muestra) throw new Error("No existe la muestra");
 
     const lote = await prisma.lote.create({
+      include: LOTE_RELACIONES,
       data: dto!,
     });
 
@@ -93,6 +106,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
     if (!user) throw new Error("No existe el usuario");
 
     const lotes = await prisma.lote.findMany({
+      include: LOTE_RELACIONES,
       where: {
         id_user: id,
         ...(incluirEliminados ? {} : { eliminado: false })
@@ -104,6 +118,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
   
   async getLotesTostados(): Promise<LoteEntity[]> {
     const lotes = await prisma.lote.findMany({
+      include: LOTE_RELACIONES,
       where: {
         eliminado: false,
         tipo_lote: 'Tostado Verde'
@@ -113,6 +128,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
   }
   async getLotesVerdes(): Promise<LoteEntity[]> {
     const lotes = await prisma.lote.findMany({
+      include: LOTE_RELACIONES,
       where: {
         eliminado: false,
         tipo_lote: 'Lote Verde'
@@ -145,6 +161,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
         ? {} // trae activos e inactivos
         : { eliminado: false },
       include: {
+        ...LOTE_RELACIONES,
         inventarioLotes: {
           include: { almacen: true },
         },
@@ -160,6 +177,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
         id_lote: id,
       },
       include: {
+        ...LOTE_RELACIONES,
         inventarioLotes: {
           include: {
             almacen: true,
@@ -175,6 +193,7 @@ export class LoteDataSourceImpl implements LoteDataSource {
 
   async getLotesOwnedByStore(incluirEliminados: boolean = false): Promise<LoteEntity[]> {
     const lotes = await prisma.lote.findMany({
+      include: LOTE_RELACIONES,
       where: {
         owned_by_store: true,
         ...(incluirEliminados ? {} : { eliminado: false })

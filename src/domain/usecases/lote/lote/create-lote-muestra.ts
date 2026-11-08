@@ -43,7 +43,8 @@ export class CreateLoteFromMuestra implements CreateLoteFromMuestraUseCase {
             owned_by_store: muestra.owned_by_store, // Mandan los datos originales de la muestra
             id_user: muestra.owned_by_store ? undefined : createLoteDto.id_user,
             // Datos de rotulado: si el formulario no los manda, se toman de la muestra
-            provincia: createLoteDto.provincia ?? muestra.provincia,
+            id_origen: createLoteDto.id_origen ?? muestra.id_origen,
+            id_proveedor: createLoteDto.id_proveedor ?? muestra.id_proveedor,
             anio_cosecha: createLoteDto.anio_cosecha ?? muestra.anio_cosecha,
             altura: createLoteDto.altura ?? muestra.altura,
         });

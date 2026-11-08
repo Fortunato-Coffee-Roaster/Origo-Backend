@@ -5,11 +5,10 @@ const toOptionalInt = (v: any): number | undefined =>
 export class CreateLoteRapidoDto {
     private constructor(
         public readonly id_lote        : string,
-        public readonly proveedor      : string,
+        public readonly id_proveedor   : string | undefined,
         public readonly productor      : string,
         public readonly finca          : string,
-        public readonly distrito      : string,
-        public readonly departamento   : string,
+        public readonly id_origen      : string | undefined,
         public readonly peso_g         : number,
         public readonly variedades     : string[],
         public readonly proceso        : string,
@@ -18,7 +17,6 @@ export class CreateLoteRapidoDto {
         public readonly id_user?       : string,
         public readonly peso_tostado_g?: number,
         public readonly id_analisis?   : string,
-        public readonly provincia?     : string,
         public readonly anio_cosecha?  : number,
         public readonly altura?        : number,
     ) {}
@@ -26,11 +24,10 @@ export class CreateLoteRapidoDto {
     static create(props: { [key: string]: any } ): [string?, CreateLoteRapidoDto?] {
         let {
             id_lote,
-            proveedor,
+            id_proveedor,
             productor,
             finca,
-            distrito,
-            departamento,
+            id_origen,
             peso_g,
             variedades,
             proceso,
@@ -39,7 +36,6 @@ export class CreateLoteRapidoDto {
             id_user,
             peso_tostado_g,
             id_analisis,
-            provincia,
             anio_cosecha,
             altura,
         } = props;
@@ -67,11 +63,10 @@ export class CreateLoteRapidoDto {
 
         return [undefined, new CreateLoteRapidoDto(
             id_lote,
-            proveedor,
+            id_proveedor || undefined,
             productor,
             finca,
-            distrito,
-            departamento,
+            id_origen || undefined,
             peso_g,
             variedades,
             proceso,
@@ -80,7 +75,6 @@ export class CreateLoteRapidoDto {
             id_user,
             peso_tostado_g,
             id_analisis,
-            provincia?.trim() || undefined,
             anioNum,
             alturaNum,
         )];

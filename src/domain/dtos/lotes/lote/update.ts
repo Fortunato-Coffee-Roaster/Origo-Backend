@@ -3,11 +3,10 @@ const toNullableInt = (v: any): number | null | undefined =>
 
 export class UpdateLoteDto {
     private constructor(
-        public readonly proveedor?: string,
+        public readonly id_proveedor?: string | null,
         public readonly productor?: string,
         public readonly finca?: string,
-        public readonly distrito?: string,
-        public readonly departamento?: string,
+        public readonly id_origen?: string,
         public readonly peso_g?: number,
         public readonly variedades?: string[],
         public readonly proceso?: string,
@@ -18,7 +17,6 @@ export class UpdateLoteDto {
         public readonly id_user?: string,
         public readonly id_analisis?: string,
         public readonly peso_tostado_g?: number,
-        public readonly provincia?: string | null,
         public readonly anio_cosecha?: number | null,
         public readonly precio_1?: number | null,
         public readonly escala_2?: number | null,
@@ -29,8 +27,8 @@ export class UpdateLoteDto {
         const returnObj: { [key: string]: any } = {};
         if (this.productor) returnObj.productor = this.productor;
         if (this.finca) returnObj.finca = this.finca;
-        if (this.distrito) returnObj.distrito = this.distrito;
-        if (this.departamento) returnObj.departamento = this.departamento;
+        if (this.id_origen) returnObj.id_origen = this.id_origen;
+        if (this.id_proveedor !== undefined) returnObj.id_proveedor = this.id_proveedor;
         if (this.variedades) returnObj.variedades = this.variedades;
         if (this.proceso) returnObj.proceso = this.proceso;
         if (this.tipo_lote) returnObj.tipo_lote = this.tipo_lote;
@@ -40,7 +38,6 @@ export class UpdateLoteDto {
         if (this.clasificacion) returnObj.clasificacion = this.clasificacion;
         if (this.costo !== undefined) returnObj.costo = this.costo;
         if (this.altura !== undefined) returnObj.altura = this.altura;
-        if (this.provincia !== undefined) returnObj.provincia = this.provincia;
         if (this.anio_cosecha !== undefined) returnObj.anio_cosecha = this.anio_cosecha;
 
         if (this.precio_1 !== undefined) returnObj.precio_1 = this.precio_1;
@@ -53,11 +50,10 @@ export class UpdateLoteDto {
 
     static update(props: { [key: string]: any }): [string?, UpdateLoteDto?] {
         let {
-            proveedor,
+            id_proveedor,
             productor,
             finca,
-            distrito,
-            departamento,
+            id_origen,
             peso_g,
             variedades,
             proceso,
@@ -68,7 +64,6 @@ export class UpdateLoteDto {
             id_user,
             id_analisis,
             peso_tostado_g,
-            provincia,
             anio_cosecha,
             precio_1,
             escala_2,
@@ -86,9 +81,9 @@ export class UpdateLoteDto {
             return [`El año de cosecha debe estar entre 2000 y ${anioMax}`, undefined];
         }
 
-        const provinciaFinal = provincia === undefined
-            ? undefined
-            : (typeof provincia === 'string' && provincia.trim()) ? provincia.trim() : null;
+        if (id_origen !== undefined && !id_origen) return ['El origen (id_origen) no puede quedar vacío', undefined];
+        // id_proveedor: undefined = no se toca, '' o null = se quita el proveedor
+        const idProveedorFinal = id_proveedor === undefined ? undefined : (id_proveedor || null);
 
         const precio1Num = toNullableInt(precio_1);
         const escala2Num = toNullableInt(escala_2);
@@ -106,11 +101,10 @@ export class UpdateLoteDto {
 
         return [undefined,
             new UpdateLoteDto(
-                proveedor,
+                idProveedorFinal,
                 productor,
                 finca,
-                distrito,
-                departamento,
+                id_origen,
                 peso_g,
                 variedades,
                 proceso,
@@ -121,7 +115,6 @@ export class UpdateLoteDto {
                 id_user,
                 id_analisis,
                 peso_tostado_g,
-                provinciaFinal,
                 anioNum,
                 precio1Num,
                 escala2Num,

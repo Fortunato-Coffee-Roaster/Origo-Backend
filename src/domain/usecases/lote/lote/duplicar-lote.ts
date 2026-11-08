@@ -48,8 +48,8 @@ export class DuplicateLote implements DuplicateLoteUseCase {
         let [error, createLoteDto] = CreateLoteDto.create({
             productor: lote.productor,
             finca: lote.finca,
-            distrito: lote.distrito,
-            departamento: lote.departamento,
+            id_origen: lote.id_origen,
+            id_proveedor: lote.id_proveedor,
             peso_g: pesoVerde,
             peso_tostado_g: pesoTostado,
             variedades: lote.variedades,
@@ -58,7 +58,6 @@ export class DuplicateLote implements DuplicateLoteUseCase {
             clasificacion: lote.clasificacion,
             id_user: pedido.id_user,
             // datos de origen para el rotulado — se heredan del lote padre
-            provincia: lote.provincia,
             anio_cosecha: lote.anio_cosecha,
             altura: lote.altura,
         });

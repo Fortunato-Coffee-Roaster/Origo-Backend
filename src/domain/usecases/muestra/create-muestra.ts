@@ -3,6 +3,9 @@ import { CreateMuestraDto } from "../../dtos/muestra/create";
 import { MuestraEntity } from "../../entities/muestra.entity";
 import { MuestraRepository } from "../../repository/muestra.repository";
 import { UserRepository } from "../../repository/user.repository";
+import { OrigenRepository } from "../../repository/origen.repository";
+import { ProveedorRepository } from "../../repository/proveedor.repository";
+import { validarOrigenProveedor } from "../origen/validar-origen-proveedor";
 
 export interface CreateMuestraUseCase {
     execute(createMuestraDto: CreateMuestraDto): Promise<MuestraEntity>;
@@ -12,9 +15,17 @@ export class CreateMuestra implements CreateMuestraUseCase {
     constructor(
         private readonly muestraRepository: MuestraRepository,
         private readonly userRepository: UserRepository,
+        private readonly origenRepository: OrigenRepository,
+        private readonly proveedorRepository: ProveedorRepository,
     ) { }
 
     async execute(createMuestraDto: CreateMuestraDto): Promise<MuestraEntity> {
+        await validarOrigenProveedor(this.origenRepository, this.proveedorRepository, {
+            id_origen: createMuestraDto.id_origen,
+            id_proveedor: createMuestraDto.id_proveedor,
+            exigirActivo: true,
+        });
+
         const id = await this.generarId(createMuestraDto);
         const [error, dto] = CreateMuestraDto.create({
             ...createMuestraDto,

@@ -1,14 +1,17 @@
+import { OrigenEntity } from "./origen.entity";
+import { ProveedorResumen } from "./proveedor.entity";
+
 const toOptionalNumber = (v: any): number | undefined =>
     v === null || v === undefined || v === '' ? undefined : Number(v);
 
 export class LoteEntity {
     constructor(
         public id_lote: string,
-        public proveedor: string,
+        public id_proveedor: string | null,
         public productor: string,
         public finca: string,
-        public distrito: string,
-        public departamento: string,
+        public id_origen: string | null,
+        public origen: OrigenEntity | null,
         public peso_g: number,
         public variedades: string[],
         public proceso: string,
@@ -25,18 +28,18 @@ export class LoteEntity {
         public precio_1?: number,
         public escala_2?: number,
         public escala_3?: number,
-        public provincia?: string,
+        public proveedor?: ProveedorResumen | null,
         public anio_cosecha?: number,
     ) { }
 
     public static fromObject(obj: { [key: string]: any }): LoteEntity {
         const {
             id_lote,
-            proveedor,
+            id_proveedor,
             productor,
             finca,
-            distrito,
-            departamento,
+            id_origen,
+            origen,
             peso_g,
             variedades,
             proceso,
@@ -51,7 +54,7 @@ export class LoteEntity {
             peso_tostado_g,
             fecha_registro,
             precio_1, escala_2, escala_3,
-            provincia, anio_cosecha,
+            proveedor, anio_cosecha,
         } = obj;
 
         if (!id_lote) throw new Error('id_lote property is required');
@@ -65,11 +68,11 @@ export class LoteEntity {
 
         return new LoteEntity(
             id_lote,
-            proveedor,
+            id_proveedor ?? null,
             productor,
             finca,
-            distrito,
-            departamento,
+            id_origen ?? null,
+            origen ? OrigenEntity.fromObject(origen) : null,
             peso_g,
             variedades,
             proceso,
@@ -84,7 +87,7 @@ export class LoteEntity {
             id_analisis,
             peso_tostado_g,
             precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
-            provincia ?? undefined, anio_cosecha ?? undefined,
+            proveedor ? { id_proveedor: proveedor.id_proveedor, nombre: proveedor.nombre } : null, anio_cosecha ?? undefined,
         );
     }
 }
@@ -107,11 +110,11 @@ export interface InventarioLoteMini {
 export class LoteConInventarioEntity {
   constructor(
     public id_lote: string,
-    public proveedor: string,
+    public id_proveedor: string | null,
     public productor: string,
     public finca: string,
-    public distrito: string,
-    public departamento: string,
+    public id_origen: string | null,
+    public origen: OrigenEntity | null,
     public peso_g: number,
     public variedades: string[],
     public proceso: string,
@@ -131,18 +134,18 @@ export class LoteConInventarioEntity {
     public precio_1?: number,
     public escala_2?: number,
     public escala_3?: number,
-    public provincia?: string,
+    public proveedor?: ProveedorResumen | null,
     public anio_cosecha?: number,
   ) {}
 
   static fromObject(obj: { [key: string]: any }): LoteConInventarioEntity {
     const {
       id_lote,
-      proveedor,
+      id_proveedor,
       productor,
       finca,
-      distrito,
-      departamento,
+      id_origen,
+      origen,
       peso_g,
       variedades,
       proceso,
@@ -158,7 +161,7 @@ export class LoteConInventarioEntity {
       fecha_registro,
       inventarioLotes,
       precio_1, escala_2, escala_3,
-      provincia, anio_cosecha,
+      proveedor, anio_cosecha,
     } = obj;
 
     if (!id_lote) throw new Error('id_lote property is required');
@@ -185,11 +188,11 @@ export class LoteConInventarioEntity {
 
     return new LoteConInventarioEntity(
       id_lote,
-      proveedor,
+      id_proveedor ?? null,
       productor,
       finca,
-      distrito,
-      departamento,
+      id_origen ?? null,
+      origen ? OrigenEntity.fromObject(origen) : null,
       peso_g,
       variedades,
       proceso,
@@ -205,7 +208,7 @@ export class LoteConInventarioEntity {
       id_analisis,
       peso_tostado_g,
       precio_1 ?? undefined, escala_2 ?? undefined, escala_3 ?? undefined,
-      provincia ?? undefined, anio_cosecha ?? undefined,
+      proveedor ? { id_proveedor: proveedor.id_proveedor, nombre: proveedor.nombre } : null, anio_cosecha ?? undefined,
     );
   }
 }

@@ -1,3 +1,7 @@
+import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
+import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
+import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
+import { ProveedorRepositoryImpl } from "../../infrastructure/repositories/proveedor.repository.impl";
 import { CompletarPedido, CompletarPedidoUseCase } from './../../domain/usecases/pedido/complete-pedido';
 import { Router } from "express";
 import { TuesteDataSourceImpl } from "../../infrastructure/datasources/tueste.datasource.impl";
@@ -160,13 +164,18 @@ export class TuesteRoutes {
             loteRepository
         )
 
+        const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
+        const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
+
         const createLoteUseCase = new CreateLote(
             LoteRepository,
             UserRepository,
             PedidoRepository,
             historialRepository,
             movimientoAlmacenRepository,
-            inventarioLoteRepository
+            inventarioLoteRepository,
+            origenRepository,
+            proveedorRepository
         );
 
         const duplicateLote = new DuplicateLote(

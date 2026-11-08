@@ -34,6 +34,8 @@ import { EntidadInventario } from '../../enums/entidad-inventario.enum';
 import { MovimientoAlmacenRepository } from '../../domain/repository/movimiento-almacen.repository';
 import { GetLotesByUserId } from '../../domain/usecases/lote/lote/get-lotes-user';
 import { GetLotesOwnedByStore } from '../../domain/usecases/lote/lote/get-lotes-owned-by-store';
+import { OrigenRepository } from '../../domain/repository/origen.repository';
+import { ProveedorRepository } from '../../domain/repository/proveedor.repository';
 
 
 export class LoteController {
@@ -51,8 +53,9 @@ export class LoteController {
         private readonly pedidoRepository: PedidoRepository,
         private readonly historialRepository: HistorialRepository,
         private readonly inventarioLoteRepository: InventarioLoteRepository,
-        private readonly movimientoAlmacenRepository: MovimientoAlmacenRepository
-
+        private readonly movimientoAlmacenRepository: MovimientoAlmacenRepository,
+        private readonly origenRepository: OrigenRepository,
+        private readonly proveedorRepository: ProveedorRepository,
     ) { }
 
     public createLote = async (req: Request, res: Response) => {
@@ -98,14 +101,7 @@ export class LoteController {
             return res.status(400).json({ error });
         }
 
-        new CreateLote(
-            this.loteRepository,
-            this.userRepository,
-            this.pedidoRepository,
-            this.historialRepository,
-            this.movimientoAlmacenRepository,
-            this.inventarioLoteRepository
-        )
+        this.createLoteUseCase
             .execute(createLoteDto!, undefined, undefined, idAlmacen, undefined, req.user.id_user)
             .then(lote => {
                 res.json(lote);
@@ -122,7 +118,7 @@ export class LoteController {
             return res.status(400).json({ error });
         }
         const lote_before = await this.loteRepository.getLoteById(id_lote);
-        new UpdateLote(this.loteRepository)
+        new UpdateLote(this.loteRepository, this.origenRepository, this.proveedorRepository)
             .execute(req.params.id, updateLoteDto!)
             .then(lote => {
                 res.json(lote)

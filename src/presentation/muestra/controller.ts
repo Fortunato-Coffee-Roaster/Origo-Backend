@@ -1,3 +1,5 @@
+import { OrigenRepository } from "../../domain/repository/origen.repository";
+import { ProveedorRepository } from "../../domain/repository/proveedor.repository";
 
 import { Request, Response } from "express";
 import { MuestraRepository } from "../../domain/repository/muestra.repository";
@@ -22,7 +24,9 @@ export class MuestraController {
     private readonly muestraRepository: MuestraRepository,
     private readonly userRepository: UserRepository,
     private readonly historialRepository: HistorialRepository,
-    private readonly inventarioMuestraRepository: InventarioMuestraRepository
+    private readonly inventarioMuestraRepository: InventarioMuestraRepository,
+    private readonly origenRepository: OrigenRepository,
+    private readonly proveedorRepository: ProveedorRepository,
 
   ) { }
 
@@ -74,7 +78,7 @@ export class MuestraController {
       return res.status(400).json({ error });
     }
 
-    new CreateMuestra(this.muestraRepository, this.userRepository)
+    new CreateMuestra(this.muestraRepository, this.userRepository, this.origenRepository, this.proveedorRepository)
       .execute(createMuestraDto!)
       .then((muestra) => {
         res.json(muestra);
@@ -89,7 +93,7 @@ export class MuestraController {
       return res.status(400).json({ error });
     }
     const muestra_before = this.muestraRepository.getMuestraById(id_muestra);
-    new UpdateMuestra(this.muestraRepository)
+    new UpdateMuestra(this.muestraRepository, this.origenRepository, this.proveedorRepository)
       .execute(id_muestra, updateMuestraDto!)
       .then((muestra) => {
         res.json(muestra);

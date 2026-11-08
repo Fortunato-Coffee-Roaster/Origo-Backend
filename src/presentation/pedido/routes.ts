@@ -1,3 +1,7 @@
+import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
+import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
+import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
+import { ProveedorRepositoryImpl } from "../../infrastructure/repositories/proveedor.repository.impl";
 import { MovimientoAlmacenDataSourceImpl } from './../../infrastructure/datasources/movimiento-almacen.datasource.impl';
 import { HistorialRepositoryImpl } from './../../infrastructure/repositories/historial.repository.impl';
 import { HistorialDataSourceImpl } from './../../infrastructure/datasources/historial.datasource.impl';
@@ -138,13 +142,18 @@ export class PedidoRoutes {
         const paqueteItemRepository = new PaqueteItemRepositoryImpl(paqueteItemDatasource);
 
         // Use cases
+        const origenRepository = new OrigenRepositoryImpl(new OrigenDataSourceImpl());
+        const proveedorRepository = new ProveedorRepositoryImpl(new ProveedorDataSourceImpl());
+
         const createLoteUseCase = new CreateLote(
             LoteRepository,
             UserRepository,
             PedidoRepository,
             historialRepository,
             movimientoAlmacenRepository,
-            inventarioLoteRepository
+            inventarioLoteRepository,
+            origenRepository,
+            proveedorRepository
         );
 
         const CreateLoteTostadoUseCase = new CreateLoteTostado(

@@ -70,8 +70,6 @@ export class BlendLotes implements BlendLotesUseCase {
         // 4.2) Strings para el DTO
         const productoresStr = productoresArr.join(', ');
         const fincasStr = Array.from(new Set(allLotes.map(l => l.finca))).join(', ');
-        const distritoStr = Array.from(new Set(allLotes.map(l => l.distrito))).join(', ');
-        const departamentosStr = Array.from(new Set(allLotes.map(l => l.departamento))).join(', ');
         const procesosStr = procesosArr.join(', ');
 
         // 4.3) Generar ID pasándole los arrays
@@ -95,8 +93,6 @@ export class BlendLotes implements BlendLotesUseCase {
             id_lote: blendId,
             productor: productoresStr,
             finca: fincasStr,
-            distrito: distritoStr,
-            departamento: departamentosStr,
             peso_g: pesoTotal,
             variedades: { set: variedadesArr },
             proceso: procesosStr,

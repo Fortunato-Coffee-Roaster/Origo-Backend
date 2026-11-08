@@ -1,3 +1,7 @@
+import { OrigenDataSourceImpl } from "../../infrastructure/datasources/origen.datasource.impl";
+import { OrigenRepositoryImpl } from "../../infrastructure/repositories/origen.repository.impl";
+import { ProveedorDataSourceImpl } from "../../infrastructure/datasources/proveedor.datasource.impl";
+import { ProveedorRepositoryImpl } from "../../infrastructure/repositories/proveedor.repository.impl";
 import { InventarioMuestraDataSourceImpl } from './../../infrastructure/datasources/inventario-muestra.datasource.impl';
 import { Router } from "express";
 import { MuestraDataSourceImpl } from "../../infrastructure/datasources/muestra.datasource.impl";
@@ -28,7 +32,11 @@ export class MuestraRoutes {
         const inventarioMuestraDatasource = new InventarioMuestraDataSourceImpl();
         const inventarioMuestraRepository = new InventarioMuestraRepositoryImpl(inventarioMuestraDatasource);
 
-        const muestraController = new MuestraController(muestraRepository, userRepository, historialRepository, inventarioMuestraRepository);
+        const muestraController = new MuestraController(
+            muestraRepository, userRepository, historialRepository, inventarioMuestraRepository,
+            new OrigenRepositoryImpl(new OrigenDataSourceImpl()),
+            new ProveedorRepositoryImpl(new ProveedorDataSourceImpl()),
+        );
 
 
         router.post('/', authMiddleware, muestraController.createMuestra);

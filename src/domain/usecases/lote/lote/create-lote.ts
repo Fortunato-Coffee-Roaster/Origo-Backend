@@ -14,6 +14,9 @@ import { TipoMovimiento } from "../../../../enums/tipo-movimiento.enum";
 import { EntidadInventario } from "../../../../enums/entidad-inventario.enum";
 import { CreateMovimientoAlmacenDto } from "../../../dtos/almacen/movimiento-almacen/create";
 import { TipoUser } from "../../../../enums/tipo-user.enum";
+import { OrigenRepository } from "../../../repository/origen.repository";
+import { ProveedorRepository } from "../../../repository/proveedor.repository";
+import { validarOrigenProveedor } from "../../origen/validar-origen-proveedor";
 
 
 export interface CreateLoteUseCase {
@@ -28,10 +31,19 @@ export class CreateLote implements CreateLoteUseCase {
         private readonly pedidoRepository: PedidoRepository,
         private readonly historialRepository: HistorialRepository,
         private readonly movimientoAlmacenRepository: MovimientoAlmacenRepository,
-        private readonly inventarioLoteRepository: InventarioLoteRepository
+        private readonly inventarioLoteRepository: InventarioLoteRepository,
+        private readonly origenRepository: OrigenRepository,
+        private readonly proveedorRepository: ProveedorRepository,
     ) { }
 
     async execute(createLoteDto: CreateLoteDto, tueste?: Boolean, id_c?: string, id_almacen?: string, id_pedido?: string, id_user_accion?: string): Promise<LoteEntity> {
+        // Lote derivado de un pedido: el proveedor se hereda y puede estar inactivo.
+        await validarOrigenProveedor(this.origenRepository, this.proveedorRepository, {
+            id_origen: createLoteDto.id_origen,
+            id_proveedor: createLoteDto.id_proveedor,
+            exigirActivo: !id_pedido,
+        });
+
         const id = await this.generarId(createLoteDto, tueste, id_c);
         const [error, dto] = CreateLoteDto.create({
             ...createLoteDto,
