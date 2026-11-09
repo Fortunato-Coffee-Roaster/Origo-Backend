@@ -1,14 +1,14 @@
 // src/domain/dtos/user/update.ts
 import { TipoUser } from "../../../enums/tipo-user.enum";
 
-const ERROR_CAMPOS_CLIENTE = 'Los datos de cliente (nombre comercial, departamento, dirección, tuestes, suscripción, primera compra) solo aplican a usuarios de tipo CLIENTE';
+const ERROR_CAMPOS_CLIENTE = 'Los datos de cliente (nombre comercial, departamento, dirección, tuestes, primera compra) solo aplican a usuarios de tipo CLIENTE';
 const ERROR_CAMPOS_STAFF = 'El cargo solo aplica a usuarios de tipo STAFF';
 
 // true si el body trae algún dato real de la tabla UserCliente.
 // Vacíos, null, 0 y false no cuentan (mismo criterio con el que se guardan).
 const tieneDatosCliente = (props: { [key: string]: any }): boolean =>
     !!(props.nombre_comercial || props.departamento || props.direccion || props.tuestes
-        || props.suscripcion || props.cant_suscripcion || props.fecha_primera_compra);
+        || props.fecha_primera_compra);
 
 // true si el body trae algún dato real de la tabla UserStaff.
 const tieneDatosStaff = (props: { [key: string]: any }): boolean => !!props.cargo;
@@ -132,8 +132,6 @@ export class UpdateUserClienteDto extends UpdateUserDto {
         public readonly departamento?: string,
         public readonly direccion?: string,
         public readonly tuestes?: number,
-        public readonly suscripcion?: boolean,
-        public readonly cant_suscripcion?: number,
         public readonly fecha_primera_compra?: Date | null,
     ) {
         super(base, body);
@@ -147,8 +145,6 @@ export class UpdateUserClienteDto extends UpdateUserDto {
         if (this.departamento) returnObj.departamento = this.departamento;
         if (this.direccion) returnObj.direccion = this.direccion;
         if (this.tuestes) returnObj.tuestes = this.tuestes;
-        if (this.suscripcion) returnObj.suscripcion = this.suscripcion;
-        if (this.cant_suscripcion) returnObj.cant_suscripcion = this.cant_suscripcion;
         if (this.fecha_primera_compra !== undefined) returnObj.fecha_primera_compra = this.fecha_primera_compra;
 
         return returnObj;
@@ -162,8 +158,6 @@ export class UpdateUserClienteDto extends UpdateUserDto {
             departamento,
             direccion,
             tuestes,
-            suscripcion,
-            cant_suscripcion,
             fecha_primera_compra,
         } = props;
 
@@ -178,8 +172,6 @@ export class UpdateUserClienteDto extends UpdateUserDto {
             departamento,
             direccion,
             tuestes,
-            suscripcion,
-            cant_suscripcion,
             parsedFechaPrimeraCompra,
         )];
     }

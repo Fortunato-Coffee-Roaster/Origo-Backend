@@ -6,10 +6,25 @@ import { UpdateUserClienteDto, UpdateUserDto, UpdateUserStaffDto } from '../../d
 import { TipoUser } from "../../enums/tipo-user.enum";
 import { UserEntity } from "../../domain/entities/user/user.entity";
 import { UserFactory } from "../../domain/entities/user/user.factory";
+import { SUSCRIPCION_INCLUDE } from "./suscripcion.datasource.impl";
 
 // Toda lectura de User trae sus tablas hijas: UserFactory las necesita para
 // armar UserClienteEntity / UserStaffEntity / UserAdminEntity.
-const USER_INCLUDE = { cliente: true, staff: true, admin: true } as const;
+// Al cliente se le adjunta su suscripción ACTIVA (→ suscripcion_actual).
+const USER_INCLUDE = {
+  cliente: {
+    include: {
+      suscripciones: {
+        where: { estado: 'ACTIVA' },
+        orderBy: { fecha_inicio: 'desc' },
+        take: 1,
+        include: SUSCRIPCION_INCLUDE,
+      },
+    },
+  },
+  staff: true,
+  admin: true,
+} satisfies Prisma.UserInclude;
 
 export class UserDataSourceImpl implements UserDataSource {
 
