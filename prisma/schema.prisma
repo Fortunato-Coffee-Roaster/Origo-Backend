@@ -14,39 +14,43 @@ enum TipoUser {
 }
 
 model User {
-  id_user               String               @id @default(uuid())
-  tipo                  TipoUser
-  nombre                String
-  email                 String               @unique
-  password              String
-  numero_telefono       String
-  documento_tipo        String?
-  documento_identidad   String?              @unique
-  fecha_nacimiento      DateTime?
-  eliminado             Boolean              @default(false)
-  fecha_registro        DateTime             @default(now())
-  fecha_editado         DateTime?
-  cliente               UserCliente?
-  staff                 UserStaff?
-  admin                 UserAdmin?
-  passwordResetTokens   PasswordResetToken[]
-  historial             Historial[]
-  cambios               Cambios[]
-  pedidosCreados        Pedido[]             @relation("PedidoCreadoPor")
-  pedidosCompletados    Pedido[]             @relation("PedidoCompletadoPor")
-  paquetesCreados       Paquete[]            @relation("PaqueteCreadoPor")
-  paquetesPreparados    Paquete[]            @relation("PaquetePreparadoPor")
-  enviosRegistrados     Envio[]              @relation("EnvioRegistradoPor")
-  enviosDespachados     Envio[]              @relation("EnvioDespachadoPor")
-  enviosEntregados      Envio[]              @relation("EnvioEntregadoPor")
-  enviosCancelados      Envio[]              @relation("EnvioCanceladoPor")
-  balonesGasIngresados  BalonGas[]           @relation("BalonGasUserIngreso")
-  balonesGasIniciados   BalonGas[]           @relation("BalonGasUserInicioUso")
-  balonesGasFinalizados BalonGas[]           @relation("BalonGasUserFinUso")
-  ingresosCafe          IngresoCafe[]
-  ingresosInsumos       IngresoInsumo[]
-  ingresosProductos     IngresoProducto[]
-  movimientoAlmacens    MovimientoAlmacen[]
+  id_user                   String                     @id @default(uuid())
+  tipo                      TipoUser
+  nombre                    String
+  email                     String                     @unique
+  password                  String
+  numero_telefono           String
+  documento_tipo            String?
+  documento_identidad       String?                    @unique
+  fecha_nacimiento          DateTime?
+  eliminado                 Boolean                    @default(false)
+  fecha_registro            DateTime                   @default(now())
+  fecha_editado             DateTime?
+  cliente                   UserCliente?
+  staff                     UserStaff?
+  admin                     UserAdmin?
+  passwordResetTokens       PasswordResetToken[]
+  historial                 Historial[]
+  cambios                   Cambios[]
+  pedidosCreados            Pedido[]                   @relation("PedidoCreadoPor")
+  pedidosCompletados        Pedido[]                   @relation("PedidoCompletadoPor")
+  paquetesCreados           Paquete[]                  @relation("PaqueteCreadoPor")
+  paquetesPreparados        Paquete[]                  @relation("PaquetePreparadoPor")
+  enviosRegistrados         Envio[]                    @relation("EnvioRegistradoPor")
+  enviosDespachados         Envio[]                    @relation("EnvioDespachadoPor")
+  enviosEntregados          Envio[]                    @relation("EnvioEntregadoPor")
+  enviosCancelados          Envio[]                    @relation("EnvioCanceladoPor")
+  balonesGasIngresados      BalonGas[]                 @relation("BalonGasUserIngreso")
+  balonesGasIniciados       BalonGas[]                 @relation("BalonGasUserInicioUso")
+  balonesGasFinalizados     BalonGas[]                 @relation("BalonGasUserFinUso")
+  ingresosCafe              IngresoCafe[]
+  ingresosInsumos           IngresoInsumo[]
+  ingresosProductos         IngresoProducto[]
+  movimientoAlmacens        MovimientoAlmacen[]
+  suscripcionesCreadas      Suscripcion[]              @relation("SuscripcionCreadaPor")
+  congelamientosCreados     SuscripcionCongelamiento[] @relation("CongelamientoCongeladoPor")
+  congelamientosReactivados SuscripcionCongelamiento[] @relation("CongelamientoReactivadoPor")
+  comprasCafeRegistradas    CompraCafe[]               @relation("CompraCafeRegistradaPor")
 }
 
 model UserCliente {
@@ -57,8 +61,6 @@ model UserCliente {
   direccion            String?
   tuestes              Int?           @default(0)
   fecha_primera_compra DateTime?
-  suscripcion          Boolean        @default(false)
-  cant_suscripcion     Int?           @default(0)
   lotes                Lote[]
   lotesTostados        LoteTostado[]
   muestras             Muestra[]
@@ -66,6 +68,7 @@ model UserCliente {
   pedidos              Pedido[]       @relation("Cliente")
   paquetesCliente      Paquete[]      @relation("PaqueteCliente")
   boxRespuestas        BoxRespuesta[]
+  suscripciones        Suscripcion[]
 }
 
 model UserStaff {
@@ -121,6 +124,30 @@ model Permiso {
   roles       RolPermiso[]
 }
 
+model Proveedor {
+  id_proveedor String       @id @default(uuid())
+  nombre       String
+  documento    String?
+  telefono     String?
+  activo       Boolean      @default(true)
+  created_at   DateTime     @default(now())
+  lotes        Lote[]
+  muestras     Muestra[]
+  comprasCafe  CompraCafe[]
+}
+
+model Origen {
+  id_origen    String    @id @default(uuid())
+  ubigeo       String    @unique
+  departamento String
+  provincia    String
+  distrito     String
+  lotes        Lote[]
+  muestras     Muestra[]
+
+  @@index([departamento, provincia])
+}
+
 model Almacen {
   id_almacen          String                  @id @default(uuid())
   nombre              String
@@ -139,6 +166,7 @@ model Almacen {
   pedidos             Pedido[]                @relation("almacen")
   inventarioBolsas    InventarioBolsa[]
   paqueteItems        PaqueteItem[]
+  comprasCafe         CompraCafe[]
 }
 
 model MovimientoAlmacen {
@@ -162,15 +190,14 @@ model MovimientoAlmacen {
 
 model Muestra {
   id_muestra         String              @id
+  id_origen          String?
+  id_proveedor       String?
   owned_by_store     Boolean             @default(false)
   productor          String?
   finca              String?
-  distrito           String?             @map("region")
-  departamento       String?
-  provincia          String?
   anio_cosecha       Int?
   altura             Int?
-  peso               Float
+  peso_g             Float
   variedades         String[]
   proceso            String
   id_user            String?
@@ -178,19 +205,20 @@ model Muestra {
   fecha_registro     DateTime            @default(now())
   eliminado          Boolean             @default(false)
   nombre_muestra     String?
-  proveedor          String?
   completado         Boolean             @default(false)
   inventarioMuestras InventarioMuestra[]
   analisis           Analisis?           @relation(fields: [id_analisis], references: [id_analisis])
   user               UserCliente?        @relation(fields: [id_user], references: [id_user])
   muestrasHistoricas Muestra_Analisis[]
+  origen             Origen?             @relation(fields: [id_origen], references: [id_origen])
+  proveedor          Proveedor?          @relation(fields: [id_proveedor], references: [id_proveedor])
 }
 
 model InventarioMuestra {
   id_inventario  String    @id @default(uuid())
   id_muestra     String
   id_almacen     String
-  peso           Float
+  peso_g         Float
   fecha_registro DateTime  @default(now())
   fecha_editado  DateTime?
   almacen        Almacen   @relation(fields: [id_almacen], references: [id_almacen])
@@ -201,16 +229,15 @@ model InventarioMuestra {
 
 model Lote {
   id_lote          String           @id
+  id_origen        String?
+  id_proveedor     String?
   owned_by_store   Boolean          @default(false)
   productor        String?
   finca            String?
-  distrito         String?          @map("region")
-  departamento     String?
-  provincia        String?
   anio_cosecha     Int?
   altura           Int?
-  peso             Float
-  peso_tostado     Float?
+  peso_g           Float
+  peso_tostado_g   Float?
   variedades       String[]
   proceso          String
   tipo_lote        String
@@ -218,12 +245,8 @@ model Lote {
   id_analisis      String?
   fecha_registro   DateTime         @default(now())
   eliminado        Boolean          @default(false)
-  proveedor        String?
   clasificacion    String?
   costo            Float?
-  precio_1         Float?
-  escala_2         Float?
-  escala_3         Float?
   alias            String?
   boxOpcions       BoxOpcion[]
   boxRespuestas    BoxRespuesta[]
@@ -238,18 +261,53 @@ model Lote {
   pedidosDestino   Pedido[]         @relation("LoteDestino")
   pedidosOrigen    Pedido[]         @relation("LoteOrigen")
   pedidosCreadores Pedido[]         @relation("LoteCreado")
+  origen           Origen?          @relation(fields: [id_origen], references: [id_origen])
+  proveedor        Proveedor?       @relation(fields: [id_proveedor], references: [id_proveedor])
+  precio           PrecioLote?
+  compras          CompraCafe[]
+}
+
+model CompraCafe {
+  id_compra          String   @id @default(uuid())
+  id_lote            String
+  id_almacen         String
+  id_proveedor       String?
+  cantidad_g         Float
+  costo_compra_kg    Float
+  costo_adicional_kg Float? // flete / "puesto en Lima"
+  fecha_ingreso      DateTime @default(now())
+  comentario         String?
+  id_user            String
+
+  lote      Lote       @relation(fields: [id_lote], references: [id_lote])
+  almacen   Almacen    @relation(fields: [id_almacen], references: [id_almacen])
+  proveedor Proveedor? @relation(fields: [id_proveedor], references: [id_proveedor])
+  user      User       @relation("CompraCafeRegistradaPor", fields: [id_user], references: [id_user])
+
+  @@index([id_lote])
+  @@index([fecha_ingreso])
+}
+
+model PrecioLote {
+  id_lote            String   @id
+  precio_sugerido_kg Float?
+  precio_escala_1_kg Float
+  precio_escala_2_kg Float
+  precio_escala_3_kg Float
+  updated_at         DateTime @updatedAt
+  lote               Lote     @relation(fields: [id_lote], references: [id_lote])
 }
 
 model InventarioLote {
-  id_inventario       String    @id @default(uuid())
-  id_lote             String
-  id_almacen          String
-  cantidad_kg         Float
-  fecha_registro      DateTime  @default(now())
-  fecha_editado       DateTime?
-  cantidad_tostado_kg Float?
-  almacen             Almacen   @relation(fields: [id_almacen], references: [id_almacen])
-  lote                Lote      @relation(fields: [id_lote], references: [id_lote])
+  id_inventario      String    @id @default(uuid())
+  id_lote            String
+  id_almacen         String
+  cantidad_g         Float
+  fecha_registro     DateTime  @default(now())
+  fecha_editado      DateTime?
+  cantidad_tostado_g Float?
+  almacen            Almacen   @relation(fields: [id_almacen], references: [id_almacen])
+  lote               Lote      @relation(fields: [id_lote], references: [id_lote])
 
   @@unique([id_lote, id_almacen])
 }
@@ -260,7 +318,7 @@ model LoteTostado {
   owned_by_store         Boolean                 @default(false)
   fecha_tostado          DateTime
   perfil_tostado         String
-  peso                   Float
+  peso_g                 Float
   fecha_registro         DateTime                @default(now())
   eliminado              Boolean                 @default(false)
   id_analisis_rapido     String?                 @unique
@@ -280,7 +338,7 @@ model InventarioLoteTostado {
   id_inventario   String      @id @default(uuid())
   id_lote_tostado String
   id_almacen      String
-  cantidad_kg     Float
+  cantidad_g      Float
   fecha_registro  DateTime    @default(now())
   fecha_editado   DateTime?
   almacen         Almacen     @relation(fields: [id_almacen], references: [id_almacen])
@@ -523,7 +581,7 @@ model Notas {
 model IngresoCafe {
   id_ingreso     String   @id @default(uuid())
   id_lote        String
-  cantidad_kg    Float
+  cantidad_g     Float
   costo_unitario Float
   fecha_ingreso  DateTime @default(now())
   proveedor      String?
@@ -547,6 +605,9 @@ enum HistorialEntidad {
   TUESTE
   PAQUETE
   ENVIO
+  SUSCRIPCION
+  TIPO_SUSCRIPCION
+  PRECIO_LOTE
 }
 
 enum HistorialAccion {
@@ -603,7 +664,7 @@ model Pedido {
   id_almacen           String?
   id_producto          String?
   comentario           String?
-  pesos                Float[]
+  pesos_g              Float[]
   fecha_tueste         DateTime?
   tostadora            String?
   facturado            Boolean?
@@ -734,7 +795,7 @@ model Tueste {
   id_pedido                 String
   densidad                  Float
   humedad                   Float
-  peso_entrada              Float
+  peso_entrada_g            Float
   fecha_tueste              DateTime
   temperatura_entrada       Float?
   llama_inicial             Float?
@@ -747,8 +808,8 @@ model Tueste {
   porcentaje_caramelizacion Float?
   desarrollo                Float?
   grados_desarrollo         Float?
-  peso_salida               Float?
-  merma                     Float?
+  peso_salida_g             Float?
+  merma_porcentaje          Float?
   agtrom_comercial          Float?
   agtrom_gourmet            Float?
   estado_tueste             String       @default("Pendiente")
@@ -838,6 +899,63 @@ model DireccionEnvio {
   envio Envio @relation(fields: [id_envio], references: [id_envio])
 }
 
+model TipoSuscripcion {
+  id_tipo_suscripcion String        @id @default(uuid())
+  nombre              String        @unique
+  cantidad_meses      Int
+  peso_bolsa_g        Int
+  cant_bolsas         Int // bolsas por envío (1 envío por mes)
+  activo              Boolean       @default(true)
+  created_at          DateTime      @default(now())
+  suscripciones       Suscripcion[]
+}
+
+model Suscripcion {
+  id_suscripcion          String            @id @default(uuid())
+  id_cliente              String
+  id_tipo_suscripcion     String
+  // copia del tipo al momento de crearla (si cambian el plan, las ya vendidas no cambian)
+  duracion_meses          Int
+  peso_bolsa_g            Int
+  cant_bolsas             Int
+  fecha_inicio            DateTime
+  fecha_fin               DateTime // se corre al reactivar un congelamiento
+  estado                  EstadoSuscripcion @default(ACTIVA)
+  id_suscripcion_anterior String?
+  comentario              String?
+  created_by              String
+  created_at              DateTime          @default(now())
+  updated_at              DateTime          @updatedAt
+
+  cliente        UserCliente                @relation(fields: [id_cliente], references: [id_user])
+  tipo           TipoSuscripcion            @relation(fields: [id_tipo_suscripcion], references: [id_tipo_suscripcion])
+  anterior       Suscripcion?               @relation("SuscripcionRenovacion", fields: [id_suscripcion_anterior], references: [id_suscripcion])
+  siguientes     Suscripcion[]              @relation("SuscripcionRenovacion")
+  creadoPor      User                       @relation("SuscripcionCreadaPor", fields: [created_by], references: [id_user])
+  congelamientos SuscripcionCongelamiento[]
+
+  @@index([id_cliente])
+  @@index([estado, fecha_fin])
+}
+
+model SuscripcionCongelamiento {
+  id_congelamiento    String    @id @default(uuid())
+  id_suscripcion      String
+  fecha_congelamiento DateTime
+  fecha_reactivacion  DateTime? // null = sigue congelada
+  dias                Int? // lo que duró; se llena al reactivar
+  comentario          String?
+  congelado_por       String
+  reactivado_por      String?
+  created_at          DateTime  @default(now())
+
+  suscripcion   Suscripcion @relation(fields: [id_suscripcion], references: [id_suscripcion])
+  congeladoPor  User        @relation("CongelamientoCongeladoPor", fields: [congelado_por], references: [id_user])
+  reactivadoPor User?       @relation("CongelamientoReactivadoPor", fields: [reactivado_por], references: [id_user])
+
+  @@index([id_suscripcion])
+}
+
 model Lote_Analisis {
   id             String   @id @default(uuid())
   id_lote        String
@@ -880,8 +998,8 @@ model Analisis {
 model AnalisisFisico {
   id_analisis_fisico        String    @id @default(uuid())
   fecha_registro            DateTime  @default(now())
-  peso_muestra              Float
-  peso_pergamino            Float
+  peso_muestra_g            Float
+  peso_pergamino_g          Float
   wa                        Float
   temperatura_wa            Float
   humedad                   Float
@@ -892,9 +1010,9 @@ model AnalisisFisico {
   superior_malla_18         Float
   superior_malla_16         Float
   superior_malla_14         Float
-  peso_defectos             Float
+  peso_defectos_g           Float
   quaquers                  Float?
-  peso_muestra_tostada      Float?
+  peso_muestra_tostada_g    Float?
   desarrollo                Float?
   porcentaje_caramelizacion Float?
   c_desarrollo              Float?
@@ -1021,4 +1139,11 @@ enum OrigenEnvio {
 enum ClasificacionEnvio {
   PARCIAL
   TOTAL
+}
+
+enum EstadoSuscripcion {
+  ACTIVA // última de la cadena del cliente (en curso, congelada, programada o vencida por decidir)
+  RENOVADA // ya tiene una siguiente comprada; sigue vigente hasta su fecha_fin
+  FINALIZADA // venció y el cliente decidió no renovar
+  CANCELADA // se cortó antes de tiempo
 }
