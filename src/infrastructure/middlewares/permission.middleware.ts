@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../../data/postgres';
 import { envs } from '../../config/envs';
+import { TipoUser } from "../../enums/tipo-user.enum";
 
 export const checkPermission = (permissionCode: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -12,6 +13,11 @@ export const checkPermission = (permissionCode: string) => {
         return res.status(401).json({
           message: 'No autenticado',
         });
+      }
+
+      // 🔓 ADMIN: acceso total sin permisos (desde la herencia de usuarios no tiene rol).
+      if (user.tipo === TipoUser.ADMIN) {
+        return next();
       }
 
       // 🔓 Super admin: bypass total por id_rol, no consulta RolPermiso
@@ -73,7 +79,7 @@ export const marcarPermiso = (permissionCode: string) => {
     try {
       const user = req.user;
 
-      if (user && envs.SUPER_ADMIN_ROL_ID && user.id_rol === envs.SUPER_ADMIN_ROL_ID) {
+      if (user && (user.tipo === TipoUser.ADMIN || (envs.SUPER_ADMIN_ROL_ID && user.id_rol === envs.SUPER_ADMIN_ROL_ID))) {
         req.permisos[permissionCode] = true;
         return next();
       }
